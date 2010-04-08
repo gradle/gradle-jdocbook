@@ -1,4 +1,4 @@
-package org.jboss.gradle.plugins.jdocbook.format;
+package org.jboss.gradle.plugins.jdocbook.render;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.logging.Logger;
@@ -11,8 +11,8 @@ import org.jboss.gradle.plugins.jdocbook.JDocBookPlugin;
  *
  * @author Steve Ebersole
  */
-public class JDocBookFormat extends DefaultTask {
-	private static final Logger log = Logging.getLogger( JDocBookFormat.class );
+public class JDocBookRender extends DefaultTask {
+	private static final Logger log = Logging.getLogger( JDocBookRender.class );
 
 	private JDocBookPlugin plugin;
 	private String language;

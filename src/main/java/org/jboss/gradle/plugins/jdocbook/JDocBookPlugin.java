@@ -1,13 +1,12 @@
 package org.jboss.gradle.plugins.jdocbook;
 
 import org.gradle.api.*;
-import org.jboss.gradle.plugins.jdocbook.format.JDocBookFormat;
+import org.jboss.gradle.plugins.jdocbook.render.JDocBookRender;
 import org.jboss.gradle.plugins.jdocbook.profile.JDocBookProfile;
 import org.jboss.gradle.plugins.jdocbook.translate.JDocBookTranslate;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Callable;
 
 /**
@@ -164,17 +163,17 @@ public class JDocBookPlugin implements Plugin<Project> {
 		formatLanguageGroup.setDescription( String.format( "Perform all DocBook formatting for language %s", language ) );
 
 		for ( Format format : configuration.getFormats() ) {
-			JDocBookFormat formatTask = project.getTasks().add(
+			JDocBookRender renderTask = project.getTasks().add(
 					String.format( "profileDocBook_%s_%s", language, format.getFormatName() ),
-					JDocBookFormat.class
+					JDocBookRender.class
 			);
-			formatTask.setDescription( String.format( "Perform DocBook %s formatting for language %s", format.getFormatName(), language ) );
-			formatTask.configure( this, language, format );
+			renderTask.setDescription( String.format( "Perform DocBook %s formatting for language %s", format.getFormatName(), language ) );
+			renderTask.configure( this, language, format );
 			if ( formatDependency != null ) {
-				formatTask.dependsOn( formatDependency );
+				renderTask.dependsOn( formatDependency );
 			}
-			formatLanguageGroup.dependsOn( formatTask );
-			formatGroups.get( format.getFormatName() ).dependsOn( formatTask );
+			formatLanguageGroup.dependsOn( renderTask );
+			formatGroups.get( format.getFormatName() ).dependsOn( renderTask );
 		}
 	}
 }
