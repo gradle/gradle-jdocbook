@@ -25,5 +25,6 @@ public class JDocBookConvention {
 	 */
 	public void jdocbook(Closure closure) {
 		ConfigureUtil.configure( closure, plugin.getConfiguration() );
+		plugin.applyConfiguration();
 	}
 }

@@ -1,25 +1,31 @@
 package org.jboss.gradle.plugins.jdocbook;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.jboss.jdocbook.util.XIncludeHelper;
 
 /**
- * TODO : javadoc
+ * Delegate used to help cache master source file resolution
  *
  * @author Steve Ebersole
  */
 public class MasterSourceFileResolver {
 	private final JDocBookPlugin plugin;
 
-	public MasterSourceFileResolver(JDocBookPlugin plugin) {
+	MasterSourceFileResolver(JDocBookPlugin plugin) {
 		this.plugin = plugin;
 	}
 
 	private File mainMasterFile;
 
+	/**
+	 * Retrieve the {@link File} reference to the main master document.
+	 *
+	 * @return The main master document file.
+	 */
 	public File getMainMasterFile() {
 		if ( mainMasterFile == null ) {
 			mainMasterFile = new File(
@@ -30,15 +36,20 @@ public class MasterSourceFileResolver {
 		return mainMasterFile;
 	}
 
-	private File[] masterFiles;
+	private Set<File> masterFiles;
 
-	public File[] getFiles() {
+	/**
+	 * Retrieve the collection of all master language files.
+	 *
+	 * @return All the master language files.
+	 */
+	public Set<File> getFiles() {
 		if ( masterFiles == null ) {
 			File mainMasterFile = getMainMasterFile();
 			final Set<File> files = new TreeSet<File>();
 			files.add( mainMasterFile );
 			XIncludeHelper.findAllInclusionFiles( mainMasterFile, files );
-			this.masterFiles = files.toArray( new File[ files.size() ] );
+			this.masterFiles = Collections.unmodifiableSet( files );
 		}
 		return masterFiles;
 	}
