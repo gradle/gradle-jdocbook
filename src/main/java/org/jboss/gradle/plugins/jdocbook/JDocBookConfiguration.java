@@ -1,7 +1,9 @@
 package org.jboss.gradle.plugins.jdocbook;
 
-import java.util.Properties;
+import java.util.*;
 
+import groovy.util.ObservableList;
+import org.gradle.api.Action;
 import org.gradle.api.Project;
 
 /**
@@ -13,7 +15,7 @@ public class JDocBookConfiguration {
 	public static final String DEFAULT_STANDARD_DATE_INJECTION_FORMAT = "yyyy-MM-dd";
 
 	private String masterTranslationLanguage = "en-US";
-	private String[] translations;
+	private final Set<String> translations = new HashSet<String>();
 	private String masterSourceDocumentName;
 	private String[] catalogs;
 	private Properties transformerParameters;
@@ -23,8 +25,13 @@ public class JDocBookConfiguration {
 	private boolean useFopFontCache = true;
 	private boolean applyStandardInjectionValues = true;
 	private String injectionDateFormat = DEFAULT_STANDARD_DATE_INJECTION_FORMAT;
+    private final Action<String> translationListener;
 
-	public String[] getCatalogs() {
+    public JDocBookConfiguration(Action<String> translationListener) {
+        this.translationListener = translationListener;
+    }
+
+    public String[] getCatalogs() {
 		return catalogs;
 	}
 
@@ -96,13 +103,16 @@ public class JDocBookConfiguration {
 		this.masterTranslationLanguage = masterTranslationLanguage;
 	}
 
-	public String[] getTranslations() {
+	public Collection<String> getTranslations() {
 		return translations;
 	}
 
-	public void setTranslations(String[] translations) {
-		this.translations = translations;
-	}
+    public JDocBookConfiguration translation(String translation) {
+        if (translations.add(translation)) {
+            translationListener.execute(translation);
+        }
+        return this;
+    }
 
 	public String getMasterSourceDocumentName() {
 		return masterSourceDocumentName;

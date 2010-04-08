@@ -1,9 +1,10 @@
 package org.jboss.gradle.plugins.jdocbook;
 
-import org.gradle.api.DefaultTask;
-import org.gradle.api.Plugin;
-import org.gradle.api.Project;
-import org.gradle.api.Task;
+import org.gradle.api.*;
+import org.jboss.gradle.plugins.jdocbook.i18n.ApplyTranslationTask;
+
+import java.util.Locale;
+import java.util.concurrent.Callable;
 
 /**
  * TODO : javadoc
@@ -11,7 +12,7 @@ import org.gradle.api.Task;
  * @author Steve Ebersole
  */
 public class JDocBookPlugin implements Plugin<Project> {
-	private final JDocBookConfiguration configuration = new JDocBookConfiguration();
+	private JDocBookConfiguration configuration;
 
 	public JDocBookConfiguration getConfiguration() {
 		return configuration;
@@ -35,7 +36,7 @@ public class JDocBookPlugin implements Plugin<Project> {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void apply(Project project) {
+	public void apply(final Project project) {
 		this.project = project;
 
 		// set up the configuration used to define jDocBook-based artifacts (docbook, styles, etc).
@@ -47,17 +48,32 @@ public class JDocBookPlugin implements Plugin<Project> {
 		// set up our convention and configuration objects
 		project.getConvention().getPlugins().put( "jdocbook", new JDocBookConvention( this ) );
 
+        configuration = new JDocBookConfiguration(translationAddedAction());
 		directoryLayout = new DirectoryLayout( project, this );
 		masterSourceFileResolver = new MasterSourceFileResolver( this );
+
+        Task translateTask = project.getTasks().add( "translateDocBook" );
+        translateTask.setDescription( "Perform all DocBook translation tasks" );
+        translateTask.dependsOn ( new Callable<Object>() {
+            public Object call() throws Exception {
+                return project.getTasks().withType(ApplyTranslationTask.class).getAll();
+            }
+        });
+
+        Task docsTask = project.getTasks().add( "buildDocs" );
+        docsTask.setDescription( "Builds all documentation" );
+        docsTask.dependsOn( translateTask );
 	}
 
-	public void applyConfigurationChanges() {
-		// set up the translation tasks
-		Task translateTask = project.getTasks().add( "translateDocBook" );
-		translateTask.setDescription( "Perform all DocBook translation tasks" );
-		for ( String translationLanguage : configuration.getTranslations() ) {
-			
-		}
-	}
-
+    private Action<String> translationAddedAction() {
+        return new Action<String>() {
+            public void execute(String language) {
+                String taskName = String.format( "translate_%s", language );
+                ApplyTranslationTask task = project.getTasks().add( taskName, ApplyTranslationTask.class );
+                task.setDescription(String.format("Translates DocBook source for language %s", language));
+                task.setTranslationLanguage(language);
+                task.setTranslationOutputDirectory(directoryLayout.getTranslationDirectory(language));
+            }
+        };
+    }
 }

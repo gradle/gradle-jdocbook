@@ -1,0 +1,16 @@
+buildscript {
+    repositories {
+        flatDir(dirs: '../../../build/libs')
+    }
+    dependencies {
+        classpath ':gradle-jdocbook:'
+    }
+}
+
+apply plugin: 'base' // for clean
+apply plugin: 'jdocbook'
+
+jdocbook {
+    translation 'en-AU'
+    translation 'de-DE'
+}

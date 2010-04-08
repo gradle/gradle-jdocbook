@@ -1,14 +1,14 @@
 package org.jboss.gradle.plugins.jdocbook.i18n;
 
-import java.io.File;
-import java.util.Locale;
-
 import org.gradle.api.DefaultTask;
+import org.gradle.api.logging.Logger;
+import org.gradle.api.logging.Logging;
+import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
 import org.jboss.gradle.plugins.jdocbook.MasterSourceFileResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.io.File;
 
 /**
  * Task to apply GNU <a href="http://www.gnu.org/software/gettext/">gettext</a>-based translations to generate
@@ -18,13 +18,22 @@ import org.slf4j.LoggerFactory;
  * @author Steve Ebersole
  */
 public class ApplyTranslationTask extends DefaultTask {
-	private static final Logger log = LoggerFactory.getLogger( ApplyTranslationTask.class );
+	private static final Logger log = Logging.getLogger( ApplyTranslationTask.class );
 
-	private Locale translationLanguage;
+	private String translationLanguage;
 	private MasterSourceFileResolver masterSourceFileResolver;
+    private File translationOutputDirectory;
 
+    @Input
+    public String getTranslationLanguage() {
+        return translationLanguage;
+    }
 
-	@OutputDirectory
+    public void setTranslationLanguage(String translationLanguage) {
+        this.translationLanguage = translationLanguage;
+    }
+
+    @OutputDirectory
 	public File getTranslationOutputDirectory() {
 		return translationOutputDirectory;
 	}
@@ -40,6 +49,9 @@ public class ApplyTranslationTask extends DefaultTask {
 //		log.trace( "Starting translation task [{}]", translationLanguage );
 
 		// See comments in JDocBookPlugin#apply...
+
+        log.lifecycle("translating {}", translationLanguage);
+        log.lifecycle("into {}", translationOutputDirectory);
 	}
 
 }

@@ -23,8 +23,7 @@ public class JDocBookConvention {
 	 *
 	 * @param closure
 	 */
-	public void configure(Closure closure) {
+	public void jdocbook(Closure closure) {
 		ConfigureUtil.configure( closure, plugin.getConfiguration() );
-		plugin.applyConfigurationChanges();
 	}
 }
