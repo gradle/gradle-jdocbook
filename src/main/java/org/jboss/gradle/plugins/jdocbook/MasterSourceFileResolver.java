@@ -12,13 +12,10 @@ import org.jboss.jdocbook.util.XIncludeHelper;
  * @author Steve Ebersole
  */
 public class MasterSourceFileResolver {
-	private final DirectoryLayout directoryLayout;
-	private final JDocBookConfiguration jDocBookConfiguration;
+	private final JDocBookPlugin plugin;
 
-
-	public MasterSourceFileResolver(DirectoryLayout directoryLayout, JDocBookConfiguration jDocBookConfiguration) {
-		this.directoryLayout = directoryLayout;
-		this.jDocBookConfiguration = jDocBookConfiguration;
+	public MasterSourceFileResolver(JDocBookPlugin plugin) {
+		this.plugin = plugin;
 	}
 
 	private File mainMasterFile;
@@ -26,8 +23,8 @@ public class MasterSourceFileResolver {
 	public File getMainMasterFile() {
 		if ( mainMasterFile == null ) {
 			mainMasterFile = new File(
-					directoryLayout.getMasterSourceDirectory(),
-					jDocBookConfiguration.getMasterSourceDocumentName()
+					plugin.getDirectoryLayout().getMasterSourceDirectory(),
+					plugin.getConfiguration().getMasterSourceDocumentName()
 			);
 		}
 		return mainMasterFile;

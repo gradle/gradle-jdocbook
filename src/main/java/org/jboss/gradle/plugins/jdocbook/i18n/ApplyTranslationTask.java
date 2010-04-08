@@ -20,22 +20,20 @@ import org.slf4j.LoggerFactory;
 public class ApplyTranslationTask extends DefaultTask {
 	private static final Logger log = LoggerFactory.getLogger( ApplyTranslationTask.class );
 
-	// See comments in JDocBookPlugin#apply...
+	private Locale translationLanguage;
+	private MasterSourceFileResolver masterSourceFileResolver;
 
-//	private final Locale translationLanguage;
-//	private final TranslationEnvironment environment;
-//	private final MasterSourceFileResolver masterSourceFileResolver;
-//
-//	@OutputDirectory
-//	public File getTranslationOutputDirectory() {
-//		return translationOutputDirectory;
-//	}
-//
-//	public void setTranslationOutputDirectory(File translationOutputDirectory) {
-//		this.translationOutputDirectory = translationOutputDirectory;
-//	}
-//
-//	private File masterSourceDirectory;
+
+	@OutputDirectory
+	public File getTranslationOutputDirectory() {
+		return translationOutputDirectory;
+	}
+
+	public void setTranslationOutputDirectory(File translationOutputDirectory) {
+		this.translationOutputDirectory = translationOutputDirectory;
+	}
+
+	private File masterSourceDirectory;
 
 	@TaskAction
 	public void apply() {

@@ -11,11 +11,9 @@ import org.gradle.util.ConfigureUtil;
  * @author Hans Dockter
  */
 public class JDocBookConvention {
-	private final JDocBookConfiguration jDocBookConfiguration;
 	private final JDocBookPlugin plugin;
 
-	public JDocBookConvention(JDocBookConfiguration configuration, JDocBookPlugin plugin) {
-		this.jDocBookConfiguration = configuration;
+	public JDocBookConvention(JDocBookPlugin plugin) {
 		this.plugin = plugin;
 	}
 
@@ -26,6 +24,7 @@ public class JDocBookConvention {
 	 * @param closure
 	 */
 	public void configure(Closure closure) {
-		ConfigureUtil.configure( closure, jDocBookConfiguration );
+		ConfigureUtil.configure( closure, plugin.getConfiguration() );
+		plugin.applyConfigurationChanges();
 	}
 }

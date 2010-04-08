@@ -16,16 +16,14 @@ import org.gradle.api.Project;
 public class DirectoryLayout {
 	private final Project project;
 	private final JDocBookPlugin plugin;
-	private final JDocBookConfiguration jDocBookConfiguration;
 
 	private final File rootJDocBookSourceDirectory;
 	private final File rootJDocBookTranslationWorkDirectory;
 	private final File rootJDocBookProfileWorkDirectory;
 
-	public DirectoryLayout(Project project, JDocBookPlugin plugin, JDocBookConfiguration jDocBookConfiguration) {
+	public DirectoryLayout(Project project, JDocBookPlugin plugin) {
 		this.project = project;
 		this.plugin = plugin;
-		this.jDocBookConfiguration = jDocBookConfiguration;
 
 		this.rootJDocBookSourceDirectory = new File( new File( new File( project.getProjectDir(), "src" ), "main" ), "docbook" );
 		File rootJDocBookWorkDirectory = new File( new File( project.getBuildDir(), "docbook" ), "work" );
@@ -37,7 +35,7 @@ public class DirectoryLayout {
 	// source dir layout ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	public File getMasterSourceDirectory() {
-		return getTranslationSourceDirectory( jDocBookConfiguration.getMasterTranslationLanguage() );
+		return getTranslationSourceDirectory( plugin.getConfiguration().getMasterTranslationLanguage() );
 	}
 
 	public File getPotSourceDirectory() {
