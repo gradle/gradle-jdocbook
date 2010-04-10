@@ -1,11 +1,12 @@
 package org.jboss.gradle.plugins.jdocbook;
 
-import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Properties;
 import java.util.Set;
 
-import org.gradle.api.Action;
+import org.jboss.jdocbook.Profiling;
+import org.jboss.jdocbook.ValueInjection;
 
 /**
  * Represents jDocBook configuration.
@@ -20,14 +21,15 @@ public class JDocBookConfiguration {
 	private Set<String> translations = new HashSet<String>();
 	private Profiling profiling = new Profiling();
 	private Set<Format> formats = new HashSet<Format>();
-	private Set<String> catalogs = new HashSet<String>();
+	private LinkedHashSet<String> catalogs = new LinkedHashSet<String>();
 	private Properties transformerParameters;
+	private LinkedHashSet<ValueInjection> valueInjections = new LinkedHashSet<ValueInjection>();
+	private boolean applyStandardInjectionValues = true;
+	private String injectionDateFormat = DEFAULT_STANDARD_DATE_INJECTION_FORMAT;
 	private char localeSeparator = '-';
 	private boolean useRelativeImageUris = true;
 	private boolean autoDetectFonts = false;
 	private boolean useFopFontCache = true;
-	private boolean applyStandardInjectionValues = true;
-	private String injectionDateFormat = DEFAULT_STANDARD_DATE_INJECTION_FORMAT;
 
 	public String getMasterSourceDocumentName() {
 		return masterSourceDocumentName;
@@ -57,19 +59,19 @@ public class JDocBookConfiguration {
 		return formats;
 	}
 
-    public JDocBookConfiguration format(Format format) {
+	public JDocBookConfiguration format(Format format) {
 		formats.add( format );
-        return this;
-    }
+		return this;
+	}
 
-	public Set<String> getCatalogs() {
+	public LinkedHashSet<String> getCatalogs() {
 		return catalogs;
 	}
 
-    public JDocBookConfiguration catalog(String catalog) {
-        catalogs.add( catalog );
+	public JDocBookConfiguration catalog(String catalog) {
+		catalogs.add( catalog );
 		return this;
-    }
+	}
 
 	public Properties getTransformerParameters() {
 		return transformerParameters;
@@ -125,5 +127,9 @@ public class JDocBookConfiguration {
 
 	public void setInjectionDateFormat(String injectionDateFormat) {
 		this.injectionDateFormat = injectionDateFormat;
+	}
+
+	public LinkedHashSet<ValueInjection> getValueInjections() {
+		return valueInjections;
 	}
 }

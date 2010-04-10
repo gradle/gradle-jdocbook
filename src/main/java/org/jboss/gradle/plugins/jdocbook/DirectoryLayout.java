@@ -17,22 +17,25 @@ public class DirectoryLayout {
 	private final Project project;
 	private final JDocBookPlugin plugin;
 
-	private final File rootJDocBookSourceDirectory;
-	private final File rootJDocBookTranslationWorkDirectory;
-	private final File rootJDocBookProfileWorkDirectory;
 
 	public DirectoryLayout(Project project, JDocBookPlugin plugin) {
 		this.project = project;
 		this.plugin = plugin;
-
-		this.rootJDocBookSourceDirectory = new File( new File( new File( project.getProjectDir(), "src" ), "main" ), "docbook" );
-		File rootJDocBookWorkDirectory = new File( new File( project.getBuildDir(), "docbook" ), "work" );
-		this.rootJDocBookTranslationWorkDirectory = new File( rootJDocBookWorkDirectory, "translate" );
-		this.rootJDocBookProfileWorkDirectory = new File( rootJDocBookWorkDirectory, "profile" );
 	}
 
 
 	// source dir layout ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	private File rootJDocBookSourceDirectory;
+
+	private File getRootJDocBookSourceDirectory() {
+		if ( rootJDocBookSourceDirectory == null ) {
+			final File src = new File( project.getProjectDir(), "src" );
+			final File srcMain = new File( src, "main" );
+			this.rootJDocBookSourceDirectory = new File( srcMain, "docbook"  );
+		}
+		return rootJDocBookSourceDirectory;
+	}
 
 	public File getMasterSourceDirectory() {
 		return getTranslationSourceDirectory( plugin.getConfiguration().getMasterTranslationLanguage() );
@@ -43,20 +46,63 @@ public class DirectoryLayout {
 	}
 
 	public File getTranslationSourceDirectory(String language) {
-		return new File( rootJDocBookSourceDirectory, language );
+		return new File( getRootJDocBookSourceDirectory(), language );
+	}
+
+
+	// staging directory ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	private File stagingDirectory;
+
+	public File getStagingDirectory() {
+		if ( stagingDirectory == null ) {
+			stagingDirectory = new File( new File( project.getBuildDir(), "docbook" ), "staging" );
+		}
+		return stagingDirectory;
+	}
+
+
+ 	// work directory ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	private File rootJDocBookWorkDirectory;
+
+	private File getRootJDocBookWorkDirectory() {
+		if ( rootJDocBookWorkDirectory == null ) {
+			rootJDocBookWorkDirectory = new File( new File( project.getBuildDir(), "docbook" ), "work" );
+		}
+		return rootJDocBookWorkDirectory;
 	}
 
 
 	// translation work dir layout ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+	private File rootJDocBookTranslationWorkDirectory;
+
+	private File getRootJDocBookTranslationWorkDirectory() {
+		if ( rootJDocBookTranslationWorkDirectory == null ) {
+			rootJDocBookTranslationWorkDirectory = new File( getRootJDocBookWorkDirectory(), "translate" );
+		}
+		return rootJDocBookTranslationWorkDirectory;
+	}
+
 	public File getTranslationDirectory(String language) {
-		return new File( rootJDocBookTranslationWorkDirectory, language );
+		return new File( getRootJDocBookTranslationWorkDirectory(), language );
 	}
 
 
 	// profile work dir layout ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	private File rootJDocBookProfileWorkDirectory;
+
+	private File getRootJDocBookProfileWorkDirectory() {
+		if ( rootJDocBookProfileWorkDirectory == null ) {
+			rootJDocBookProfileWorkDirectory = new File( getRootJDocBookWorkDirectory(), "profile" );
+		}
+		return rootJDocBookProfileWorkDirectory;
+	}
+
 	public File getProfilingDirectory(String language) {
-		return new File( rootJDocBookProfileWorkDirectory, language );
+		return new File( getRootJDocBookProfileWorkDirectory(), language );
 	}
 
 }

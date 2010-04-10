@@ -12,6 +12,7 @@ import org.gradle.util.ConfigureUtil;
  */
 public class JDocBookConvention {
 	private final JDocBookPlugin plugin;
+	private int count = 0;
 
 	public JDocBookConvention(JDocBookPlugin plugin) {
 		this.plugin = plugin;
@@ -21,10 +22,10 @@ public class JDocBookConvention {
 	 * This is the method performed by users to configure jDocBook exceptions to the jDocBook
 	 * conventions (defaults).
 	 *
-	 * @param closure
+	 * @param closure The configuration closure
 	 */
 	public void jdocbook(Closure closure) {
 		ConfigureUtil.configure( closure, plugin.getConfiguration() );
-		plugin.applyConfiguration();
+		plugin.applyConfiguration( ++count > 1 );
 	}
 }

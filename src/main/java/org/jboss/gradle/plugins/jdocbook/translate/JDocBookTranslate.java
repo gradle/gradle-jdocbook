@@ -9,8 +9,11 @@ import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
 import org.jboss.gradle.plugins.jdocbook.JDocBookPlugin;
+import org.jboss.jdocbook.TranslationSource;
+import org.jboss.jdocbook.util.TranslationUtils;
 
 import java.io.File;
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -25,18 +28,21 @@ public class JDocBookTranslate extends DefaultTask {
 
 	private JDocBookPlugin plugin;
 	private String translationLanguage;
+	private TranslationSourceImpl translationSource;
 
 	public void configure(JDocBookPlugin plugin, String translationLanguage) {
 		this.plugin = plugin;
 		this.translationLanguage = translationLanguage;
+		this.translationSource = new TranslationSourceImpl();
 	}
 
-    @Input
-    public String getTranslationLanguage() {
-        return translationLanguage;
-    }
+	@Input
+	public String getTranslationLanguage() {
+		return translationLanguage;
+	}
 
 	@InputFiles
+	@SuppressWarnings({ "UnusedDeclaration" })
 	public Set<File> getMasterSourceFiles() {
 		return plugin.getMasterSourceFileResolver().getFiles();
 	}
@@ -46,18 +52,29 @@ public class JDocBookTranslate extends DefaultTask {
 		return plugin.getDirectoryLayout().getTranslationSourceDirectory( getTranslationLanguage() );
 	}
 
-    @OutputDirectory
+	@OutputDirectory
 	public File getTranslationOutputDirectory() {
 		return plugin.getDirectoryLayout().getTranslationDirectory( getTranslationLanguage() );
 	}
 
 	@TaskAction
+	@SuppressWarnings({ "UnusedDeclaration" })
 	public void translate() {
-        log.lifecycle( "translating {} into {}", translationLanguage, getTranslationOutputDirectory() );
-
-		// TODO : hook into jDocBook translation processor
-		// 		after we have split that out to work on individual translations (it currently handles them all at once
-		//		since that is the model used in the maven plugin)
+		log.lifecycle( "translating {} into {}", translationLanguage, getTranslationOutputDirectory() );
+		plugin.getComponentFactory().getTranslator().translate( translationSource );
 	}
 
+	private class TranslationSourceImpl implements TranslationSource {
+		public Locale getLanguage() {
+			return TranslationUtils.parse( getTranslationLanguage(), plugin.getConfiguration().getLocaleSeparator() );
+		}
+
+		public File resolvePoDirectory() {
+			return getTranslationSourceDirectory();
+		}
+
+		public File resolveTranslatedXmlDirectory() {
+			return getTranslationOutputDirectory();
+		}
+	}
 }
