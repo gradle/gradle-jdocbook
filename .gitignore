@@ -4,3 +4,6 @@
 .idea
 build
 .gradle
+.classpath
+.project
+
