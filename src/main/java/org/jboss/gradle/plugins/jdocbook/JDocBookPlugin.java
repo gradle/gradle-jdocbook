@@ -17,6 +17,8 @@ import java.util.concurrent.Callable;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
+import org.gradle.api.logging.Logger;
+import org.gradle.api.logging.Logging;
 import org.gradle.api.specs.Spec;
 import org.jboss.jdocbook.Configuration;
 import org.jboss.jdocbook.Environment;
@@ -36,6 +38,8 @@ import org.jboss.jdocbook.util.TranslationUtils;
  * @author Steve Ebersole
  */
 public class JDocBookPlugin implements Plugin<Project> {
+	private static final Logger log = Logging.getLogger( JDocBookPlugin.class );
+
 	public static final String JDOCBOOK_CONFIG_NAME = "jDocBook";
 	public static final String TRANSLATE_TASK_GROUP = "translateDocBook";
 	public static final String PROFILE_TASK_GROUP = "profileDocBook";
@@ -269,8 +273,14 @@ public class JDocBookPlugin implements Plugin<Project> {
 			}
 		}
 
-		// TODO : how to get all jars/artifacts/dependencies named in the 'jDocBook' configuration???
-		//		these need to get added the the urls list
+		for( File file : project.getConfigurations().getByName( JDOCBOOK_CONFIG_NAME ).getFiles() ) {
+			try {
+				urls.add( file.toURI().toURL() );
+			}
+			catch ( MalformedURLException e ) {
+				log.warn( "Unable to retrieve file url [" + file.getAbsolutePath() + "]; ignoring" );
+			}
+		}
 
 		return new URLClassLoader(
 				urls.toArray( new URL[ urls.size() ] ),
