@@ -1,135 +1,245 @@
 package org.jboss.gradle.plugins.jdocbook;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import groovy.lang.Closure;
+import org.gradle.util.ConfigureUtil;
 import org.jboss.jdocbook.Profiling;
 import org.jboss.jdocbook.ValueInjection;
+import org.jboss.jdocbook.render.FormatOptions;
 
 /**
- * Represents jDocBook configuration.
+ * Represents user jDocBook configuration.
  *
  * @author Steve Ebersole
  */
 public class JDocBookConfiguration {
 	public static final String DEFAULT_STANDARD_DATE_INJECTION_FORMAT = "yyyy-MM-dd";
 
+
+	// MASTER DOCUMENT ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	private String masterSourceDocumentName;
-	private String masterTranslationLanguage = "en-US";
-	private Set<String> translations = new HashSet<String>();
-	private Profiling profiling = new Profiling();
-	private Set<Format> formats = new HashSet<Format>();
-	private LinkedHashSet<String> catalogs = new LinkedHashSet<String>();
-	private Properties transformerParameters;
-	private LinkedHashSet<ValueInjection> valueInjections = new LinkedHashSet<ValueInjection>();
-	private boolean applyStandardInjectionValues = true;
-	private String injectionDateFormat = DEFAULT_STANDARD_DATE_INJECTION_FORMAT;
-	private char localeSeparator = '-';
-	private boolean useRelativeImageUris = true;
-	private boolean autoDetectFonts = false;
-	private boolean useFopFontCache = true;
 
 	public String getMasterSourceDocumentName() {
 		return masterSourceDocumentName;
 	}
 
-	public void setMasterSourceDocumentName(String masterSourceDocumentName) {
-		this.masterSourceDocumentName = masterSourceDocumentName;
+
+	// MASTER LANGUAGE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	private String masterLanguage = "en-US";
+
+	public String getMasterLanguage() {
+		return masterLanguage;
 	}
 
-	public String getMasterTranslationLanguage() {
-		return masterTranslationLanguage;
-	}
 
-	public void setMasterTranslationLanguage(String masterTranslationLanguage) {
-		this.masterTranslationLanguage = masterTranslationLanguage;
-	}
+	// TRANSLATIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	private Set<String> translations = new HashSet<String>();
 
 	public Set<String> getTranslations() {
 		return translations;
 	}
 
+	/**
+	 * Allow adding them one by one
+	 *
+	 * @param translation The translation to add
+	 */
+	public void translation(String translation) {
+		translations.add( translation );
+	}
+
+	/**
+	 * Also, allow adding them all at once
+	 *
+	 * @param translations An array of translation languages.
+	 */
+	public void translations(String[] translations) {
+		this.translations.addAll( Arrays.asList( translations ) );
+	}
+
+
+	// PROFILING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	private Profiling profiling = new Profiling();
+
 	public Profiling getProfiling() {
 		return profiling;
 	}
 
-	public Set<Format> getFormats() {
+	/**
+	 * Allow config by closure
+	 *
+	 * @param closure The config closure
+	 */
+	public void profiling(Closure closure) {
+		ConfigureUtil.configure( closure, profiling );
+	}
+
+	/**
+	 * Allow config by map
+	 *
+	 * @param settings The user settings.
+	 */
+	public void profiling(Map<String,?> settings) {
+		ConfigureUtil.configureByMap( settings, profiling );
+	}
+
+
+	// FORMATS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	private Set<FormatOptions> formats = new HashSet<FormatOptions>();
+
+	public Set<FormatOptions> getFormats() {
 		return formats;
 	}
 
-	public JDocBookConfiguration format(Format format) {
-		formats.add( format );
-		return this;
+	/**
+	 * Allow config by Closure
+	 *
+	 * @param closure The config closure
+	 */
+	public void format(Closure closure) {
+		final FormatOptionsImpl formatOptions = new FormatOptionsImpl();
+		ConfigureUtil.configure( closure, formatOptions );
+		formats.add( formatOptions );
 	}
+
+	/**
+	 * Allow config by map
+	 *
+	 * @param settings The user settings
+	 */
+	public void format(Map<String,?> settings) {
+		final FormatOptionsImpl formatOptions = new FormatOptionsImpl();
+		ConfigureUtil.configureByMap( settings, formatOptions );
+		formats.add( formatOptions );
+	}
+
+	public static class FormatOptionsImpl implements FormatOptions {
+		private String name;
+		private String finalName;
+		private String stylesheet;
+
+		public String getName() {
+			return name;
+		}
+
+		public String getTargetFinalName() {
+			return finalName;
+		}
+
+		public String getStylesheetResource() {
+			return stylesheet;
+		}
+	}
+
+
+	// CATALOGS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	private LinkedHashSet<String> catalogs = new LinkedHashSet<String>();
 
 	public LinkedHashSet<String> getCatalogs() {
 		return catalogs;
 	}
 
-	public JDocBookConfiguration catalog(String catalog) {
+	public void catalog(String catalog) {
 		catalogs.add( catalog );
-		return this;
 	}
 
-	public Properties getTransformerParameters() {
-		return transformerParameters;
-	}
 
-	public void setTransformerParameters(Properties transformerParameters) {
-		this.transformerParameters = transformerParameters;
-	}
+	// LOCALE SEPARATOR ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	private char localeSeparator = '-';
 
 	public char getLocaleSeparator() {
 		return localeSeparator;
 	}
 
-	public void setLocaleSeparator(char localeSeparator) {
-		this.localeSeparator = localeSeparator;
-	}
+
+	// IMAGE URI HANDLING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	private boolean useRelativeImageUris = true;
 
 	public boolean isUseRelativeImageUris() {
 		return useRelativeImageUris;
 	}
 
-	public void setUseRelativeImageUris(boolean useRelativeImageUris) {
-		this.useRelativeImageUris = useRelativeImageUris;
-	}
+
+	// AUTO-DETECT FONTS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	private boolean autoDetectFonts = false;
 
 	public boolean isAutoDetectFonts() {
 		return autoDetectFonts;
 	}
 
-	public void setAutoDetectFonts(boolean autoDetectFonts) {
-		this.autoDetectFonts = autoDetectFonts;
-	}
+
+	// FONT CACHE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	private boolean useFopFontCache = true;
 
 	public boolean isUseFopFontCache() {
 		return useFopFontCache;
 	}
 
-	public void setUseFopFontCache(boolean useFopFontCache) {
-		this.useFopFontCache = useFopFontCache;
+	// VALUE INJECTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	private LinkedHashSet<ValueInjection> valueInjections = new LinkedHashSet<ValueInjection>();
+
+	public LinkedHashSet<ValueInjection> getValueInjections() {
+		return valueInjections;
 	}
+
+	/**
+	 * Allow configuration by closure
+	 *
+	 * @param closure The config closure
+	 */
+	public void valueInjection(Closure closure) {
+		ValueInjection injection = new ValueInjection();
+		ConfigureUtil.configure( closure, injection );
+		valueInjections.add( injection );
+	}
+
+	/**
+	 * Allow configuration by map
+	 *
+	 * @param settings The user settings
+	 */
+	public void valueInjection(Map<String,?> settings) {
+		ValueInjection injection = new ValueInjection();
+		ConfigureUtil.configureByMap( settings, injection );
+		valueInjections.add( injection );
+	}
+
+	private boolean applyStandardInjectionValues = true;
 
 	public boolean isApplyStandardInjectionValues() {
 		return applyStandardInjectionValues;
 	}
 
-	public void setApplyStandardInjectionValues(boolean applyStandardInjectionValues) {
-		this.applyStandardInjectionValues = applyStandardInjectionValues;
-	}
+	private String injectionDateFormat = DEFAULT_STANDARD_DATE_INJECTION_FORMAT;
 
 	public String getInjectionDateFormat() {
 		return injectionDateFormat;
 	}
 
-	public void setInjectionDateFormat(String injectionDateFormat) {
-		this.injectionDateFormat = injectionDateFormat;
+
+	// TRANSFORMER PARAMETERS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	private Properties transformerParameters;
+
+	public Properties getTransformerParameters() {
+		return transformerParameters;
 	}
 
-	public LinkedHashSet<ValueInjection> getValueInjections() {
-		return valueInjections;
-	}
 }
