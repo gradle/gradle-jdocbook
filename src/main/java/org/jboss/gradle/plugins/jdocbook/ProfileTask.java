@@ -1,4 +1,4 @@
-package org.jboss.gradle.plugins.jdocbook.profile;
+package org.jboss.gradle.plugins.jdocbook;
 
 import java.io.File;
 import java.util.Locale;
@@ -10,18 +10,16 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
-import org.jboss.gradle.plugins.jdocbook.JDocBookPlugin;
 import org.jboss.jdocbook.Profiling;
-import org.jboss.jdocbook.ProfilingSource;
-import org.jboss.jdocbook.util.TranslationUtils;
+import org.jboss.jdocbook.profile.ProfilingSource;
 
 /**
  * TODO : javadoc
  *
  * @author Steve Ebersole
  */
-public class JDocBookProfile extends DefaultTask {
-	private static final Logger log = Logging.getLogger( JDocBookProfile.class );
+public class ProfileTask extends DefaultTask {
+	private static final Logger log = Logging.getLogger( ProfileTask.class );
 
 	private JDocBookPlugin plugin;
 	private String language;
@@ -49,7 +47,7 @@ public class JDocBookProfile extends DefaultTask {
 		// todo : this is slightly different between the case of master and translation.
 		// 		for master the more correct thing is the list of files
 		//		for translation, the translation output dir is probably enough.
-		return getLanguage().equals( plugin.getConfiguration().getMasterTranslationLanguage() )
+		return getLanguage().equals( plugin.getConfiguration().getMasterLanguage() )
 				? plugin.getDirectoryLayout().getMasterSourceDirectory()
 				: plugin.getDirectoryLayout().getTranslationDirectory( getLanguage() );
 	}
@@ -63,15 +61,12 @@ public class JDocBookProfile extends DefaultTask {
 	@SuppressWarnings({ "UnusedDeclaration" })
 	public void profile() {
 		log.lifecycle( "profiling {} into {}", getLanguage(), getProfileOutputDirectory() );
-		plugin.getComponentFactory().getProfiler().profile( profilingSource );
+		plugin.getComponentRegistry().getProfiler().profile( profilingSource );
 	}
 
 	private class ProfilingSourceImpl implements ProfilingSource {
 		public Locale getLanguage() {
-			return TranslationUtils.parse(
-					JDocBookProfile.this.getLanguage(),
-					plugin.getConfiguration().getLocaleSeparator()
-			);
+			return plugin.fromLanguageString( language );
 		}
 
 		public File resolveDocumentFile() {

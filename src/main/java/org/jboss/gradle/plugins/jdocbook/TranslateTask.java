@@ -1,4 +1,4 @@
-package org.jboss.gradle.plugins.jdocbook.translate;
+package org.jboss.gradle.plugins.jdocbook;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.logging.Logger;
@@ -8,9 +8,7 @@ import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
-import org.jboss.gradle.plugins.jdocbook.JDocBookPlugin;
-import org.jboss.jdocbook.TranslationSource;
-import org.jboss.jdocbook.util.TranslationUtils;
+import org.jboss.jdocbook.translate.TranslationSource;
 
 import java.io.File;
 import java.util.Locale;
@@ -23,8 +21,8 @@ import java.util.Set;
  *
  * @author Steve Ebersole
  */
-public class JDocBookTranslate extends DefaultTask {
-	private static final Logger log = Logging.getLogger( JDocBookTranslate.class );
+public class TranslateTask extends DefaultTask {
+	private static final Logger log = Logging.getLogger( TranslateTask.class );
 
 	private JDocBookPlugin plugin;
 	private String translationLanguage;
@@ -61,12 +59,12 @@ public class JDocBookTranslate extends DefaultTask {
 	@SuppressWarnings({ "UnusedDeclaration" })
 	public void translate() {
 		log.lifecycle( "translating {} into {}", translationLanguage, getTranslationOutputDirectory() );
-		plugin.getComponentFactory().getTranslator().translate( translationSource );
+		plugin.getComponentRegistry().getTranslator().translate( translationSource );
 	}
 
 	private class TranslationSourceImpl implements TranslationSource {
 		public Locale getLanguage() {
-			return TranslationUtils.parse( getTranslationLanguage(), plugin.getConfiguration().getLocaleSeparator() );
+			return plugin.fromLanguageString( translationLanguage );
 		}
 
 		public File resolvePoDirectory() {

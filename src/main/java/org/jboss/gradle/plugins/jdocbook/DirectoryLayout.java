@@ -38,7 +38,7 @@ public class DirectoryLayout {
 	}
 
 	public File getMasterSourceDirectory() {
-		return getTranslationSourceDirectory( plugin.getConfiguration().getMasterTranslationLanguage() );
+		return getTranslationSourceDirectory( plugin.getConfiguration().getMasterLanguage() );
 	}
 
 	public File getPotSourceDirectory() {
@@ -66,7 +66,7 @@ public class DirectoryLayout {
 
 	private File rootJDocBookWorkDirectory;
 
-	private File getRootJDocBookWorkDirectory() {
+	public File getRootJDocBookWorkDirectory() {
 		if ( rootJDocBookWorkDirectory == null ) {
 			rootJDocBookWorkDirectory = new File( new File( project.getBuildDir(), "docbook" ), "work" );
 		}
