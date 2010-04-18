@@ -1,15 +1,28 @@
 apply plugin: 'java'
+apply plugin: 'maven'  // used for 'install' and 'upload'/'deploy' task
+apply { url: 'https://loom.svn.sourceforge.net/svnroot/loom/shared/trunk/artifacts.gradle' } // sets up source and javadoc jar uploads
+
+group = 'org.jboss.jdocbook'
+// until http://jira.codehaus.org/browse/GRADLE-338 is resolved the recommended approach
+// for supplying an explicit project name is settings.gradle
+//configure(install.repositories.mavenInstaller){
+//	pom.project {
+//		artifactId 'jdocbook-core'
+//	}
+//}
+version = '1.0.0-SNAPSHOT'
 
 defaultTasks 'classes'
 
 repositories {
-    mavenRepo urls: 'http://www.aQute.biz/repo'
-    mavenRepo urls: 'http://repository.jboss.org/maven2'
-    mavenRepo urls: "file://" + System.getProperty('user.home') + "/.m2/repository/"
+    mavenCentral()
+    mavenRepo name: "jboss", urls: "https://repository.jboss.org/nexus/content/groups/public/"
+    mavenRepo name: "mavenCache", urls: "file://" + System.getProperty('user.home') + "/.m2/repository/"
 }
 
 dependencies {
     compile gradleApi()
     compile localGroovy()
-    compile 'org.jboss.jdocbook:jdocbook-core:1.0.0-SNAPSHOT'
+    compile( 'org.jboss.jdocbook:jdocbook-core:1.0.0-SNAPSHOT' )
 }
+

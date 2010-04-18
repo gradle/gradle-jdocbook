@@ -1,0 +1,4 @@
+// until http://jira.codehaus.org/browse/GRADLE-338 is resolved the recommended approach
+// for supplying an explicit project name is settings.gradle
+
+rootProject.name = 'gradle-jdocbook'
