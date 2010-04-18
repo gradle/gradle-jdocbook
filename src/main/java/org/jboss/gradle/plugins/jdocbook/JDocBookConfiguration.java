@@ -18,13 +18,14 @@ import org.jboss.jdocbook.render.FormatOptions;
  *
  * @author Steve Ebersole
  */
+@SuppressWarnings({ "UnusedDeclaration" })
 public class JDocBookConfiguration {
 	public static final String DEFAULT_STANDARD_DATE_INJECTION_FORMAT = "yyyy-MM-dd";
 
 
 	// MASTER DOCUMENT ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	private String masterSourceDocumentName;
+	private String masterSourceDocumentName = "book.xml";
 
 	public String getMasterSourceDocumentName() {
 		return masterSourceDocumentName;

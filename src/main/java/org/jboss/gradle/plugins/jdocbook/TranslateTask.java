@@ -21,6 +21,7 @@ import java.util.Set;
  *
  * @author Steve Ebersole
  */
+@SuppressWarnings({ "UnusedDeclaration" })
 public class TranslateTask extends DefaultTask {
 	private static final Logger log = Logging.getLogger( TranslateTask.class );
 
@@ -40,7 +41,6 @@ public class TranslateTask extends DefaultTask {
 	}
 
 	@InputFiles
-	@SuppressWarnings({ "UnusedDeclaration" })
 	public Set<File> getMasterSourceFiles() {
 		return plugin.getMasterSourceFileResolver().getFiles();
 	}
@@ -56,7 +56,6 @@ public class TranslateTask extends DefaultTask {
 	}
 
 	@TaskAction
-	@SuppressWarnings({ "UnusedDeclaration" })
 	public void translate() {
 		log.lifecycle( "translating {} into {}", translationLanguage, getTranslationOutputDirectory() );
 		plugin.getComponentRegistry().getTranslator().translate( translationSource );

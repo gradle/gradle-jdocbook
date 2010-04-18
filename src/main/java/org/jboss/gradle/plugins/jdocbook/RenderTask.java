@@ -12,10 +12,11 @@ import org.jboss.jdocbook.render.FormatOptions;
 import org.jboss.jdocbook.render.RenderingSource;
 
 /**
- * TODO : javadoc
+ * Task for performing DocBook rendering.
  *
  * @author Steve Ebersole
  */
+@SuppressWarnings({ "UnusedDeclaration" })
 public class RenderTask extends DefaultTask {
 	private static final Logger log = Logging.getLogger( RenderTask.class );
 
@@ -42,7 +43,6 @@ public class RenderTask extends DefaultTask {
 	}
 
 	@TaskAction
-	@SuppressWarnings({ "UnusedDeclaration" })
 	public void render() {
 		log.lifecycle( "rendering {} / {}", getLanguage(), getFormat().getName() );
 		plugin.getComponentRegistry().getRenderer().render( renderingSource, format );
