@@ -1,18 +1,11 @@
 package org.jboss.gradle.plugins.jdocbook;
 
-import org.gradle.api.DefaultTask;
+import java.io.File;
+
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
-import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputDirectory;
-import org.gradle.api.tasks.InputFiles;
-import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
-import org.jboss.jdocbook.translate.TranslationSource;
-
-import java.io.File;
-import java.util.Locale;
-import java.util.Set;
 
 /**
  * Task to apply GNU <a href="http://www.gnu.org/software/gettext/">gettext</a>-based translations to generate
@@ -22,56 +15,17 @@ import java.util.Set;
  * @author Steve Ebersole
  */
 @SuppressWarnings({ "UnusedDeclaration" })
-public class TranslateTask extends DefaultTask {
+public class TranslateTask extends AbstractTranslationTask {
 	private static final Logger log = Logging.getLogger( TranslateTask.class );
 
-	private JDocBookPlugin plugin;
-	private String translationLanguage;
-	private TranslationSourceImpl translationSource;
-
-	public void configure(JDocBookPlugin plugin, String translationLanguage) {
-		this.plugin = plugin;
-		this.translationLanguage = translationLanguage;
-		this.translationSource = new TranslationSourceImpl();
-	}
-
-	@Input
-	public String getTranslationLanguage() {
-		return translationLanguage;
-	}
-
-	@InputFiles
-	public Set<File> getMasterSourceFiles() {
-		return plugin.getMasterSourceFileResolver().getFiles();
-	}
-
 	@InputDirectory
-	public File getTranslationSourceDirectory() {
-		return plugin.getDirectoryLayout().getTranslationSourceDirectory( getTranslationLanguage() );
-	}
-
-	@OutputDirectory
-	public File getTranslationOutputDirectory() {
-		return plugin.getDirectoryLayout().getTranslationDirectory( getTranslationLanguage() );
+	public File getMasterSourceDirectory() {
+		return getPlugin().getDirectoryLayout().getMasterSourceDirectory();
 	}
 
 	@TaskAction
 	public void translate() {
-		log.lifecycle( "translating {} into {}", translationLanguage, getTranslationOutputDirectory() );
-		plugin.getComponentRegistry().getTranslator().translate( translationSource );
-	}
-
-	private class TranslationSourceImpl implements TranslationSource {
-		public Locale getLanguage() {
-			return plugin.fromLanguageString( translationLanguage );
-		}
-
-		public File resolvePoDirectory() {
-			return getTranslationSourceDirectory();
-		}
-
-		public File resolveTranslatedXmlDirectory() {
-			return getTranslationOutputDirectory();
-		}
+		log.lifecycle( "translating {} into {}", getTranslationLanguage(), getTranslationOutputDirectory() );
+		getPlugin().getComponentRegistry().getTranslator().translate( getTranslationSource() );
 	}
 }

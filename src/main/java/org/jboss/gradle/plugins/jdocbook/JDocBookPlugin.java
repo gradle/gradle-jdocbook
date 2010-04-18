@@ -71,7 +71,6 @@ public class JDocBookPlugin implements Plugin<Project> {
 		return jDocBookComponentRegistry;
 	}
 
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -132,6 +131,28 @@ public class JDocBookPlugin implements Plugin<Project> {
 		}
 		docsTask.dependsOn( renderStage );
 
+		// Add the POT update task
+		final SynchronizePotTask potTask = project.getTasks().add( "updatePot", SynchronizePotTask.class );
+		potTask.setDescription( "Update the POT files from the current state of the master language sources" );
+		potTask.configure( this );
+
+		// Add the PO update group task
+		final Task poTask = project.getTasks().add( "updatePo" );
+		poTask.setDescription( "Update the PO files for all translations from the current state of the POT files" );
+		poTask.dependsOn(
+				new Callable<Object>() {
+					public Object call() throws Exception {
+						return project.getTasks().withType( SynchronizePoTask.class ).getAll();
+					}
+				}
+		);
+
+		// Add the grouping task to manage both POT ans PO
+		final Task updateTranslations = project.getTasks().add( "updateTranslations" );
+		updateTranslations.setDescription( "Update POT and all PO files" );
+		updateTranslations.dependsOn( potTask );
+		updateTranslations.dependsOn( poTask );
+
 		// finally prepare the JDocBookComponentFactory
 		jDocBookComponentRegistry = new JDocBookComponentRegistry( new EnvironmentImpl(), new ConfigurationImpl() );
 	}
@@ -183,7 +204,15 @@ public class JDocBookPlugin implements Plugin<Project> {
 					String.format( "translateDocBook_%s", language ),
 					TranslateTask.class
 			);
+			translateTask.setDescription( String.format( "Perform DocBook translation for language %s", language ) );
 			translateTask.configure( this, language );
+
+			final SynchronizePoTask poTask = project.getTasks().add(
+					String.format( "updatePo_%s", language ),
+					SynchronizePoTask.class
+			);
+			translateTask.setDescription( String.format( "Update PO files from current POT for language %s", language ) );
+			poTask.configure( this, language );
 		}
 		Task formatDependency = translateTask;
 
