@@ -40,7 +40,8 @@ import org.jboss.jdocbook.util.TranslationUtils;
 public class JDocBookPlugin implements Plugin<Project> {
 	private static final Logger log = Logging.getLogger( JDocBookPlugin.class );
 
-	public static final String JDOCBOOK_CONFIG_NAME = "jDocBook";
+	public static final String STYLES_CONFIG_NAME = "jdocbookStyles";
+	public static final String DOCBOOK_CONFIG_NAME = "docbook";
 	public static final String TRANSLATE_TASK_GROUP = "translateDocBook";
 	public static final String PROFILE_TASK_GROUP = "profileDocBook";
 	public static final String RENDER_TASK_GROUP = "renderDocBook";
@@ -53,6 +54,10 @@ public class JDocBookPlugin implements Plugin<Project> {
 
 	private Project project;
 
+	public Project getProject() {
+		return project;
+	}
+
 	private DirectoryLayout directoryLayout;
 
 	public DirectoryLayout getDirectoryLayout() {
@@ -60,10 +65,6 @@ public class JDocBookPlugin implements Plugin<Project> {
 	}
 
 	private MasterSourceFileResolver masterSourceFileResolver;
-
-	public MasterSourceFileResolver getMasterSourceFileResolver() {
-		return masterSourceFileResolver;
-	}
 
 	private JDocBookComponentRegistry jDocBookComponentRegistry;
 
@@ -77,11 +78,16 @@ public class JDocBookPlugin implements Plugin<Project> {
 	public void apply(final Project project) {
 		this.project = project;
 
-		// set up the 'jDocBook' specialized configuration
-		project.getConfigurations().add( JDOCBOOK_CONFIG_NAME )
+		// set up the configurations
+		project.getConfigurations().add( DOCBOOK_CONFIG_NAME )
 				.setVisible( false )
 				.setTransitive( false )
-				.setDescription( "The DocBook and jDocBook artifacts to use." );
+				.setDescription( "The DocBook artifact(s) to use." );
+
+		project.getConfigurations().add( STYLES_CONFIG_NAME )
+				.setVisible( false )
+				.setTransitive( true )
+				.setDescription( "Defines any jDocBook styles artifacts to apply" );
 
 		// set up our convention and configuration objects
 		project.getConvention().getPlugins().put( "jdocbook", new JDocBookConvention( this ) );
@@ -111,10 +117,15 @@ public class JDocBookPlugin implements Plugin<Project> {
 				}
 		);
 
+		// Set up the staging task
+		StyleStagingTask stagingTask = project.getTasks().add( "stageStyles", StyleStagingTask.class );
+		stagingTask.configure( this );
+
 		// set up the rendering group task
 		Task renderStage = project.getTasks().add( RENDER_TASK_GROUP );
 		renderStage.setDescription( "Perform all DocBook formatting" );
 		renderStage.dependsOn( profileStage );
+		renderStage.dependsOn( stagingTask );
 		renderStage.dependsOn(
 				new Callable<Object>() {
 					public Object call() throws Exception {
@@ -302,7 +313,16 @@ public class JDocBookPlugin implements Plugin<Project> {
 			}
 		}
 
-		for( File file : project.getConfigurations().getByName( JDOCBOOK_CONFIG_NAME ).getFiles() ) {
+		for( File file : project.getConfigurations().getByName( DOCBOOK_CONFIG_NAME ).getFiles() ) {
+			try {
+				urls.add( file.toURI().toURL() );
+			}
+			catch ( MalformedURLException e ) {
+				log.warn( "Unable to retrieve file url [" + file.getAbsolutePath() + "]; ignoring" );
+			}
+		}
+
+		for( File file : project.getConfigurations().getByName( STYLES_CONFIG_NAME ).getFiles() ) {
 			try {
 				urls.add( file.toURI().toURL() );
 			}
