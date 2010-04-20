@@ -119,6 +119,7 @@ public class JDocBookPlugin implements Plugin<Project> {
 
 		// Set up the staging task
 		StyleStagingTask stagingTask = project.getTasks().add( "stageStyles", StyleStagingTask.class );
+		stagingTask.setDescription( "Stage all jdocbook styles to the staging directory" );
 		stagingTask.configure( this );
 
 		// set up the rendering group task
@@ -163,6 +164,11 @@ public class JDocBookPlugin implements Plugin<Project> {
 		updateTranslations.setDescription( "Update POT and all PO files" );
 		updateTranslations.dependsOn( potTask );
 		updateTranslations.dependsOn( poTask );
+
+		// set up the XSL-FO generation task
+		GenerateXslFoTask xslFoTask = project.getTasks().add( "generateXslFo", GenerateXslFoTask.class );
+		xslFoTask.setDescription( "Generate a XSL-FO file for FOP debugging (provided PDF format specified)" );
+		xslFoTask.configure( this, masterSourceFileResolver );
 
 		// finally prepare the JDocBookComponentFactory
 		jDocBookComponentRegistry = new JDocBookComponentRegistry( new EnvironmentImpl(), new ConfigurationImpl() );
