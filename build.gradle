@@ -1,4 +1,8 @@
 apply plugin: 'java'
+apply plugin: 'maven'
+
+group = 'org.jboss.jdocbook'
+version = '1.0.0-SNAPSHOT'
 
 defaultTasks 'classes'
 
