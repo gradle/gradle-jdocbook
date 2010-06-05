@@ -301,6 +301,10 @@ public class JDocBookPlugin implements Plugin<Project> {
 			// TODO
 			return null;
 		}
+
+		public DocBookXsltResolutionStrategy getDocBookXsltResolutionStrategy() {
+			return DocBookXsltResolutionStrategy.INCLUSIVE;
+		}
 	}
 
 	private class ResourceDelegateImpl extends ResourceDelegateSupport {
@@ -435,7 +439,7 @@ public class JDocBookPlugin implements Plugin<Project> {
 		}
 
 		public String getDocBookVersion() {
-			return "";
+			return null;
 		}
 	}
 
