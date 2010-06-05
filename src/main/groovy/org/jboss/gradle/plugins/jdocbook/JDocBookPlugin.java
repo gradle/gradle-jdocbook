@@ -17,6 +17,7 @@ import java.util.concurrent.Callable;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
+import org.gradle.api.initialization.dsl.ScriptHandler;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
 import org.gradle.api.specs.Spec;
@@ -42,6 +43,8 @@ public class JDocBookPlugin implements Plugin<Project> {
 
 	public static final String STYLES_CONFIG_NAME = "jdocbookStyles";
 	public static final String DOCBOOK_CONFIG_NAME = "docbook";
+
+	public static final String STAGE_TASK_GROUP = "stageStyles";
 	public static final String TRANSLATE_TASK_GROUP = "translateDocBook";
 	public static final String PROFILE_TASK_GROUP = "profileDocBook";
 	public static final String RENDER_TASK_GROUP = "renderDocBook";
@@ -105,10 +108,16 @@ public class JDocBookPlugin implements Plugin<Project> {
 				}
 		);
 
+		// Set up the staging task
+		StyleStagingTask stagingTask = project.getTasks().add( STAGE_TASK_GROUP, StyleStagingTask.class );
+		stagingTask.setDescription( "Stage all jdocbook styles to the staging directory" );
+		stagingTask.configure( this );
+
 		// set up the profiling group task
 		Task profileStage = project.getTasks().add( PROFILE_TASK_GROUP );
 		profileStage.setDescription( "Perform all DocBook profiling" );
 		profileStage.dependsOn( translateStage );
+		profileStage.dependsOn( stagingTask );
 		profileStage.dependsOn(
 				new Callable<Object>() {
 					public Object call() throws Exception {
@@ -116,11 +125,6 @@ public class JDocBookPlugin implements Plugin<Project> {
 					}
 				}
 		);
-
-		// Set up the staging task
-		StyleStagingTask stagingTask = project.getTasks().add( "stageStyles", StyleStagingTask.class );
-		stagingTask.setDescription( "Stage all jdocbook styles to the staging directory" );
-		stagingTask.configure( this );
 
 		// set up the rendering group task
 		Task renderStage = project.getTasks().add( RENDER_TASK_GROUP );
@@ -215,6 +219,8 @@ public class JDocBookPlugin implements Plugin<Project> {
 	}
 
 	private void applyLanguage(String language, boolean master) {
+		StyleStagingTask stagingTask = (StyleStagingTask) project.getTasks().getByName( STAGE_TASK_GROUP );
+
 		TranslateTask translateTask = null;
 		if ( !master ) {
 			translateTask = project.getTasks().add(
@@ -243,6 +249,7 @@ public class JDocBookPlugin implements Plugin<Project> {
 			if ( !master ) {
 				profileTask.dependsOn( translateTask );
 			}
+			profileTask.dependsOn( stagingTask );
 			formatDependency = profileTask;
 		}
 
@@ -265,6 +272,7 @@ public class JDocBookPlugin implements Plugin<Project> {
 			if ( formatDependency != null ) {
 				renderTask.dependsOn( formatDependency );
 			}
+			renderTask.dependsOn( stagingTask );
 			formatLanguageGroup.dependsOn( renderTask );
 		}
 	}
@@ -320,6 +328,15 @@ public class JDocBookPlugin implements Plugin<Project> {
 		}
 
 		for( File file : project.getConfigurations().getByName( DOCBOOK_CONFIG_NAME ).getFiles() ) {
+			try {
+				urls.add( file.toURI().toURL() );
+			}
+			catch ( MalformedURLException e ) {
+				log.warn( "Unable to retrieve file url [" + file.getAbsolutePath() + "]; ignoring" );
+			}
+		}
+
+		for( File file : project.getBuildscript().getConfigurations().getByName( ScriptHandler.CLASSPATH_CONFIGURATION ).getFiles() ) {
 			try {
 				urls.add( file.toURI().toURL() );
 			}

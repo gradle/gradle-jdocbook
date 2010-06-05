@@ -39,10 +39,24 @@ public class RenderTask extends DefaultTask {
 		return language;
 	}
 
-	@Input
+//	@Input
 	public FormatOptions getFormat() {
 		return format;
 	}
+// temporary ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	@Input
+	public String getFormatName() {
+		return getFormat().getName();
+	}
+	@Input
+	public String getFormatFinalName() {
+		return getFormat().getTargetFinalName();
+	}
+	@Input
+	public String getFormatStylesheetResource() {
+		return getFormat().getStylesheetResource();
+	}
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	@InputDirectory
 	public File getDocumentDirectory() {
