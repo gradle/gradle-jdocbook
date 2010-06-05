@@ -1,14 +1,20 @@
 buildscript {
-    repositories {
-        flatDir(dirs: '../../../build/libs')
-    }
-    dependencies {
-        classpath ':gradle-jdocbook:'
-    }
+  repositories {
+      mavenCentral()
+      mavenRepo name: "jboss", urls: "http://repository.jboss.org/maven2/"
+      mavenRepo name: "jboss-snapshots", urls: "http://snapshots.jboss.org/maven2/"
+      mavenRepo urls: "file://" + System.getProperty('user.home') + "/.m2/repository/"
+  }
+  dependencies {
+      classpath 'org.jboss.jdocbook:gradle-jdocbook:1.0.0-SNAPSHOT'
+  }
 }
 
-apply plugin: 'base' // for clean
-apply plugin: 'jdocbook'
+println "----"       
+buildscript.configurations.classpath.files.each { println it }
+println "----"
+       
+apply plugin: "jdocbook"
 
 jdocbook {
     translation 'en-AU'
