@@ -6,6 +6,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.jboss.jdocbook.util.XIncludeHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Delegate used to help cache master source file resolution
@@ -13,6 +15,8 @@ import org.jboss.jdocbook.util.XIncludeHelper;
  * @author Steve Ebersole
  */
 public class MasterSourceFileResolver {
+	private static final Logger log = LoggerFactory.getLogger( MasterSourceFileResolver.class );
+
 	private final JDocBookPlugin plugin;
 
 	MasterSourceFileResolver(JDocBookPlugin plugin) {
@@ -32,6 +36,10 @@ public class MasterSourceFileResolver {
 					plugin.getDirectoryLayout().getMasterSourceDirectory(),
 					plugin.getConfiguration().getMasterSourceDocumentName()
 			);
+			if ( !mainMasterFile.exists() ) {
+				// todo : exception?  nothing good comes of this later
+				log.error( "Master document [{}] did not exist!", mainMasterFile.getAbsolutePath() );
+			}
 		}
 		return mainMasterFile;
 	}

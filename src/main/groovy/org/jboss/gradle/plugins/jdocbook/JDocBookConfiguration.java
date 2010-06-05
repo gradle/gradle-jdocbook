@@ -18,13 +18,14 @@ import org.jboss.jdocbook.render.FormatOptions;
  *
  * @author Steve Ebersole
  */
+@SuppressWarnings({ "UnusedDeclaration" })
 public class JDocBookConfiguration {
 	public static final String DEFAULT_STANDARD_DATE_INJECTION_FORMAT = "yyyy-MM-dd";
 
 
 	// MASTER DOCUMENT ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	private String masterSourceDocumentName;
+	private String masterSourceDocumentName = "book.xml";
 
 	public String getMasterSourceDocumentName() {
 		return masterSourceDocumentName;
@@ -139,6 +140,38 @@ public class JDocBookConfiguration {
 
 		public String getStylesheetResource() {
 			return stylesheet;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if ( this == o ) {
+				return true;
+			}
+			if ( o == null || getClass() != o.getClass() ) {
+				return false;
+			}
+
+			FormatOptionsImpl that = (FormatOptionsImpl) o;
+
+			if ( finalName != null ? !finalName.equals( that.finalName ) : that.finalName != null ) {
+				return false;
+			}
+			if ( !name.equals( that.name ) ) {
+				return false;
+			}
+			if ( stylesheet != null ? !stylesheet.equals( that.stylesheet ) : that.stylesheet != null ) {
+				return false;
+			}
+
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			int result = name.hashCode();
+			result = 31 * result + ( finalName != null ? finalName.hashCode() : 0 );
+			result = 31 * result + ( stylesheet != null ? stylesheet.hashCode() : 0 );
+			return result;
 		}
 	}
 

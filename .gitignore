@@ -4,6 +4,11 @@
 .idea
 build
 .gradle
+<<<<<<< HEAD
 .classpath
 .project
 
+=======
+.project
+.classpath
+>>>>>>> 1d4b1ae51426f4ab677d863361b0467dedae1274

@@ -7,15 +7,18 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
 import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.InputDirectory;
+import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
 import org.jboss.jdocbook.render.FormatOptions;
 import org.jboss.jdocbook.render.RenderingSource;
 
 /**
- * TODO : javadoc
+ * Task for performing DocBook rendering.
  *
  * @author Steve Ebersole
  */
+@SuppressWarnings({ "UnusedDeclaration" })
 public class RenderTask extends DefaultTask {
 	private static final Logger log = Logging.getLogger( RenderTask.class );
 
@@ -41,8 +44,25 @@ public class RenderTask extends DefaultTask {
 		return format;
 	}
 
+	@InputDirectory
+	public File getDocumentDirectory() {
+		if ( plugin.getConfiguration().getProfiling().isEnabled() ) {
+			return plugin.getDirectoryLayout().getProfilingDirectory( getLanguage() );
+		}
+		else if ( getLanguage().equals( plugin.getConfiguration().getMasterLanguage() ) ) {
+			return plugin.getDirectoryLayout().getMasterSourceDirectory();
+		}
+		else {
+			return plugin.getDirectoryLayout().getTranslationDirectory( getLanguage() );
+		}
+	}
+
+	@OutputDirectory
+	public File getPublishDirectory() {
+		return plugin.getDirectoryLayout().getPublishDirectory( getLanguage(), getFormat().getName() );
+	}
+
 	@TaskAction
-	@SuppressWarnings({ "UnusedDeclaration" })
 	public void render() {
 		log.lifecycle( "rendering {} / {}", getLanguage(), getFormat().getName() );
 		plugin.getComponentRegistry().getRenderer().render( renderingSource, format );
@@ -54,15 +74,15 @@ public class RenderTask extends DefaultTask {
 		}
 
 		public File resolveSourceDocument() {
-			return null;
+			return new File( getDocumentDirectory(), plugin.getConfiguration().getMasterSourceDocumentName() );
 		}
 
 		public File resolvePublishingBaseDirectory() {
-			return null;
+			return plugin.getDirectoryLayout().getPublishBaseDirectory( RenderTask.this.getLanguage() );
 		}
 
 		public File getXslFoDirectory() {
-			return null;
+			return plugin.getDirectoryLayout().getXslFoDirectory( RenderTask.this.getLanguage() );
 		}
 	}
 }

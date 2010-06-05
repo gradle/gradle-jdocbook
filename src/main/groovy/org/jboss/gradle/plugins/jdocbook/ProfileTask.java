@@ -14,10 +14,11 @@ import org.jboss.jdocbook.Profiling;
 import org.jboss.jdocbook.profile.ProfilingSource;
 
 /**
- * TODO : javadoc
+ * Task for performing DocBook profiling
  *
  * @author Steve Ebersole
  */
+@SuppressWarnings({ "UnusedDeclaration" })
 public class ProfileTask extends DefaultTask {
 	private static final Logger log = Logging.getLogger( ProfileTask.class );
 
@@ -36,11 +37,26 @@ public class ProfileTask extends DefaultTask {
 		return language;
 	}
 
-	@Input
-	@SuppressWarnings({ "UnusedDeclaration" })
+//	@Input
 	public Profiling getProfiling() {
 		return plugin.getConfiguration().getProfiling();
 	}
+// temporary ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	@Input
+	public boolean isProfilingEnabled() {
+		return getProfiling().isEnabled();
+	}
+
+	@Input
+	public String isProfilingAttributeName() {
+		return getProfiling().getAttributeName();
+	}
+
+	@Input
+	public String isProfilingAttributeValue() {
+		return getProfiling().getAttributeValue();
+	}
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	@InputDirectory
 	public File getProfileInputDirectory() {

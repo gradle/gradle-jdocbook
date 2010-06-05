@@ -50,13 +50,25 @@ public class DirectoryLayout {
 	}
 
 
+	// target directory ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	private File targetDirectory;
+
+	private File getTargetDirectory() {
+		if ( targetDirectory == null ) {
+			targetDirectory = new File( project.getBuildDir(), "docbook" );
+		}
+		return targetDirectory;
+	}
+
+
 	// staging directory ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	private File stagingDirectory;
 
 	public File getStagingDirectory() {
 		if ( stagingDirectory == null ) {
-			stagingDirectory = new File( new File( project.getBuildDir(), "docbook" ), "staging" );
+			stagingDirectory = new File( getTargetDirectory(), "staging" );
 		}
 		return stagingDirectory;
 	}
@@ -68,7 +80,7 @@ public class DirectoryLayout {
 
 	public File getRootJDocBookWorkDirectory() {
 		if ( rootJDocBookWorkDirectory == null ) {
-			rootJDocBookWorkDirectory = new File( new File( project.getBuildDir(), "docbook" ), "work" );
+			rootJDocBookWorkDirectory = new File( getTargetDirectory(), "work" );
 		}
 		return rootJDocBookWorkDirectory;
 	}
@@ -105,4 +117,39 @@ public class DirectoryLayout {
 		return new File( getRootJDocBookProfileWorkDirectory(), language );
 	}
 
+
+	// publish dir layout ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	private File rootPublishDirectory;
+
+	private File getRootPublishDirectory() {
+		if ( rootPublishDirectory == null ) {
+			rootPublishDirectory = new File( getTargetDirectory(), "publish" );
+		}
+		return rootPublishDirectory;
+	}
+
+	public File getPublishBaseDirectory(String language) {
+		return new File( getRootPublishDirectory(), language );
+	}
+
+	public File getPublishDirectory(String language, String format) {
+		return new File( getPublishBaseDirectory( language ), format );
+	}
+
+
+	// XSL-FO dir layout ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	private File xslFoBaseDir;
+
+	public File getXslFoBaseDir() {
+		if ( xslFoBaseDir == null ) {
+			xslFoBaseDir = new File( getRootJDocBookWorkDirectory(), "xsl-fo" );
+		}
+		return xslFoBaseDir;
+	}
+
+	public File getXslFoDirectory(String language) {
+		return new File( getXslFoBaseDir(), language );
+	}
 }

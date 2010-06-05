@@ -17,6 +17,8 @@ import java.util.concurrent.Callable;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
+import org.gradle.api.logging.Logger;
+import org.gradle.api.logging.Logging;
 import org.gradle.api.specs.Spec;
 import org.jboss.jdocbook.Configuration;
 import org.jboss.jdocbook.Environment;
@@ -36,7 +38,10 @@ import org.jboss.jdocbook.util.TranslationUtils;
  * @author Steve Ebersole
  */
 public class JDocBookPlugin implements Plugin<Project> {
-	public static final String JDOCBOOK_CONFIG_NAME = "jDocBook";
+	private static final Logger log = Logging.getLogger( JDocBookPlugin.class );
+
+	public static final String STYLES_CONFIG_NAME = "jdocbookStyles";
+	public static final String DOCBOOK_CONFIG_NAME = "docbook";
 	public static final String TRANSLATE_TASK_GROUP = "translateDocBook";
 	public static final String PROFILE_TASK_GROUP = "profileDocBook";
 	public static final String RENDER_TASK_GROUP = "renderDocBook";
@@ -49,6 +54,10 @@ public class JDocBookPlugin implements Plugin<Project> {
 
 	private Project project;
 
+	public Project getProject() {
+		return project;
+	}
+
 	private DirectoryLayout directoryLayout;
 
 	public DirectoryLayout getDirectoryLayout() {
@@ -57,16 +66,11 @@ public class JDocBookPlugin implements Plugin<Project> {
 
 	private MasterSourceFileResolver masterSourceFileResolver;
 
-	public MasterSourceFileResolver getMasterSourceFileResolver() {
-		return masterSourceFileResolver;
-	}
-
 	private JDocBookComponentRegistry jDocBookComponentRegistry;
 
 	public JDocBookComponentRegistry getComponentRegistry() {
 		return jDocBookComponentRegistry;
 	}
-
 
 	/**
 	 * {@inheritDoc}
@@ -74,11 +78,16 @@ public class JDocBookPlugin implements Plugin<Project> {
 	public void apply(final Project project) {
 		this.project = project;
 
-		// set up the 'jDocBook' specialized configuration
-		project.getConfigurations().add( JDOCBOOK_CONFIG_NAME )
+		// set up the configurations
+		project.getConfigurations().add( DOCBOOK_CONFIG_NAME )
 				.setVisible( false )
 				.setTransitive( false )
-				.setDescription( "The DocBook and jDocBook artifacts to use." );
+				.setDescription( "The DocBook artifact(s) to use." );
+
+		project.getConfigurations().add( STYLES_CONFIG_NAME )
+				.setVisible( false )
+				.setTransitive( true )
+				.setDescription( "Defines any jDocBook styles artifacts to apply" );
 
 		// set up our convention and configuration objects
 		project.getConvention().getPlugins().put( "jdocbook", new JDocBookConvention( this ) );
@@ -108,10 +117,16 @@ public class JDocBookPlugin implements Plugin<Project> {
 				}
 		);
 
+		// Set up the staging task
+		StyleStagingTask stagingTask = project.getTasks().add( "stageStyles", StyleStagingTask.class );
+		stagingTask.setDescription( "Stage all jdocbook styles to the staging directory" );
+		stagingTask.configure( this );
+
 		// set up the rendering group task
 		Task renderStage = project.getTasks().add( RENDER_TASK_GROUP );
 		renderStage.setDescription( "Perform all DocBook formatting" );
 		renderStage.dependsOn( profileStage );
+		renderStage.dependsOn( stagingTask );
 		renderStage.dependsOn(
 				new Callable<Object>() {
 					public Object call() throws Exception {
@@ -121,12 +136,39 @@ public class JDocBookPlugin implements Plugin<Project> {
 		);
 
 		// Look for a "buildDocs" task and link in there.
-		Task docsTask = project.getTasks().getByName( "buildDocs" );
+		Task docsTask = project.getTasks().findByName( "buildDocs" );
 		if ( docsTask == null ) {
 			docsTask = project.getTasks().add( "buildDocs" );
 			docsTask.setDescription( "Builds all documentation" );
 		}
 		docsTask.dependsOn( renderStage );
+
+		// Add the POT update task
+		final SynchronizePotTask potTask = project.getTasks().add( "updatePot", SynchronizePotTask.class );
+		potTask.setDescription( "Update the POT files from the current state of the master language sources" );
+		potTask.configure( this );
+
+		// Add the PO update group task
+		final Task poTask = project.getTasks().add( "updatePo" );
+		poTask.setDescription( "Update the PO files for all translations from the current state of the POT files" );
+		poTask.dependsOn(
+				new Callable<Object>() {
+					public Object call() throws Exception {
+						return project.getTasks().withType( SynchronizePoTask.class ).getAll();
+					}
+				}
+		);
+
+		// Add the grouping task to manage both POT ans PO
+		final Task updateTranslations = project.getTasks().add( "updateTranslations" );
+		updateTranslations.setDescription( "Update POT and all PO files" );
+		updateTranslations.dependsOn( potTask );
+		updateTranslations.dependsOn( poTask );
+
+		// set up the XSL-FO generation task
+		GenerateXslFoTask xslFoTask = project.getTasks().add( "generateXslFo", GenerateXslFoTask.class );
+		xslFoTask.setDescription( "Generate a XSL-FO file for FOP debugging (provided PDF format specified)" );
+		xslFoTask.configure( this, masterSourceFileResolver );
 
 		// finally prepare the JDocBookComponentFactory
 		jDocBookComponentRegistry = new JDocBookComponentRegistry( new EnvironmentImpl(), new ConfigurationImpl() );
@@ -179,7 +221,15 @@ public class JDocBookPlugin implements Plugin<Project> {
 					String.format( "translateDocBook_%s", language ),
 					TranslateTask.class
 			);
+			translateTask.setDescription( String.format( "Perform DocBook translation for language %s", language ) );
 			translateTask.configure( this, language );
+
+			final SynchronizePoTask poTask = project.getTasks().add(
+					String.format( "updatePo_%s", language ),
+					SynchronizePoTask.class
+			);
+			translateTask.setDescription( String.format( "Update PO files from current POT for language %s", language ) );
+			poTask.configure( this, language );
 		}
 		Task formatDependency = translateTask;
 
@@ -269,8 +319,23 @@ public class JDocBookPlugin implements Plugin<Project> {
 			}
 		}
 
-		// TODO : how to get all jars/artifacts/dependencies named in the 'jDocBook' configuration???
-		//		these need to get added the the urls list
+		for( File file : project.getConfigurations().getByName( DOCBOOK_CONFIG_NAME ).getFiles() ) {
+			try {
+				urls.add( file.toURI().toURL() );
+			}
+			catch ( MalformedURLException e ) {
+				log.warn( "Unable to retrieve file url [" + file.getAbsolutePath() + "]; ignoring" );
+			}
+		}
+
+		for( File file : project.getConfigurations().getByName( STYLES_CONFIG_NAME ).getFiles() ) {
+			try {
+				urls.add( file.toURI().toURL() );
+			}
+			catch ( MalformedURLException e ) {
+				log.warn( "Unable to retrieve file url [" + file.getAbsolutePath() + "]; ignoring" );
+			}
+		}
 
 		return new URLClassLoader(
 				urls.toArray( new URL[ urls.size() ] ),
@@ -350,6 +415,10 @@ public class JDocBookPlugin implements Plugin<Project> {
 
 		public Profiling getProfiling() {
 			return gradleConfiguration().getProfiling();
+		}
+
+		public String getDocBookVersion() {
+			return "";
 		}
 	}
 
