@@ -1,15 +1,19 @@
-apply plugin: 'java'
+buildscript {
+    repositories {
+        mavenRepo urls: 'http://gradle.artifactoryonline.com/gradle/plugins'
+    }
+    dependencies {
+        classpath "org.gradle.plugins:gradle-idea-plugin:0.3"
+    }
+}
+
+apply plugin: 'groovy'
 apply plugin: 'maven'  // used for 'install' and 'upload'/'deploy' task
+//apply plugin: 'eclipse'
+apply plugin: 'org.gradle.idea'
 apply { url: 'https://loom.svn.sourceforge.net/svnroot/loom/shared/trunk/artifacts.gradle' } // sets up source and javadoc jar uploads
 
 group = 'org.jboss.jdocbook'
-// until http://jira.codehaus.org/browse/GRADLE-338 is resolved the recommended approach
-// for supplying an explicit project name is settings.gradle
-//configure(install.repositories.mavenInstaller){
-//	pom.project {
-//		artifactId 'jdocbook-core'
-//	}
-//}
 version = '1.0.0-SNAPSHOT'
 
 defaultTasks 'classes'
@@ -25,5 +29,7 @@ dependencies {
     compile localGroovy()
     compile 'org.jboss.jdocbook:jdocbook-core:1.0.0-SNAPSHOT'
     compile 'org.apache.ant:ant:1.7.0'
+
+    groovy localGroovy()
 }
 

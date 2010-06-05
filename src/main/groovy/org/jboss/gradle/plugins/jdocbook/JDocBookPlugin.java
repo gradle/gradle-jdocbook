@@ -136,7 +136,7 @@ public class JDocBookPlugin implements Plugin<Project> {
 		);
 
 		// Look for a "buildDocs" task and link in there.
-		Task docsTask = project.getTasks().getByName( "buildDocs" );
+		Task docsTask = project.getTasks().findByName( "buildDocs" );
 		if ( docsTask == null ) {
 			docsTask = project.getTasks().add( "buildDocs" );
 			docsTask.setDescription( "Builds all documentation" );
@@ -415,6 +415,10 @@ public class JDocBookPlugin implements Plugin<Project> {
 
 		public Profiling getProfiling() {
 			return gradleConfiguration().getProfiling();
+		}
+
+		public String getDocBookVersion() {
+			return "";
 		}
 	}
 
