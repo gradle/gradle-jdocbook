@@ -8,6 +8,7 @@ import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputDirectory;
+import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
 import org.jboss.jdocbook.render.FormatOptions;
@@ -44,15 +45,19 @@ public class RenderTask extends DefaultTask {
 		return format;
 	}
 // temporary ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// it is temporary that these flattened attributes are marked as @Input rather than the getFormat() attribute
+// see http://jira.codehaus.org/browse/GRADLE-970 for details
 	@Input
 	public String getFormatName() {
 		return getFormat().getName();
 	}
 	@Input
+	@Optional
 	public String getFormatFinalName() {
 		return getFormat().getTargetFinalName();
 	}
 	@Input
+	@Optional
 	public String getFormatStylesheetResource() {
 		return getFormat().getStylesheetResource();
 	}
