@@ -6,6 +6,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -224,7 +225,7 @@ public class JDocBookPlugin implements Plugin<Project> {
 		TranslateTask translateTask = null;
 		if ( !master ) {
 			translateTask = project.getTasks().add(
-					String.format( "translateDocBook_%s", language ),
+					String.format( TRANSLATE_TASK_GROUP + "_%s", language ),
 					TranslateTask.class
 			);
 			translateTask.setDescription( String.format( "Perform DocBook translation for language %s", language ) );
@@ -241,7 +242,7 @@ public class JDocBookPlugin implements Plugin<Project> {
 
 		if ( configuration.getProfiling().isEnabled() ) {
 			ProfileTask profileTask = project.getTasks().add(
-					String.format( "profileDocBook_%s", language ),
+					String.format( PROFILE_TASK_GROUP + "_%s", language ),
 					ProfileTask.class
 			);
 			profileTask.setDescription( String.format( "Perform DocBook profiling for language %s", language ) );
@@ -260,7 +261,7 @@ public class JDocBookPlugin implements Plugin<Project> {
 
 		for ( FormatOptions format : configuration.getFormats() ) {
 			RenderTask renderTask = project.getTasks().add(
-					String.format( "profileDocBook_%s_%s", language, format.getName() ),
+					String.format( RENDER_TASK_GROUP + "_%s_%s", language, format.getName() ),
 					RenderTask.class
 			);
 			renderTask.setDescription(
@@ -298,8 +299,7 @@ public class JDocBookPlugin implements Plugin<Project> {
 		}
 
 		public List<File> getFontDirectories() {
-			// TODO
-			return null;
+			return Collections.singletonList( directoryLayout.getFontsDirectory() );
 		}
 
 		public DocBookXsltResolutionStrategy getDocBookXsltResolutionStrategy() {
