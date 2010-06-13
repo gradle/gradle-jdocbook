@@ -8,6 +8,7 @@ import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputDirectory;
+import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
 import org.jboss.jdocbook.Profiling;
@@ -42,17 +43,19 @@ public class ProfileTask extends DefaultTask {
 		return plugin.getConfiguration().getProfiling();
 	}
 // temporary ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// it is temporary that these flattened attributes are marked as @Input rather than the getProfiling() attribute
+// see http://jira.codehaus.org/browse/GRADLE-970 for details
 	@Input
 	public boolean isProfilingEnabled() {
 		return getProfiling().isEnabled();
 	}
-
 	@Input
+	@Optional
 	public String isProfilingAttributeName() {
 		return getProfiling().getAttributeName();
 	}
-
 	@Input
+	@Optional
 	public String isProfilingAttributeValue() {
 		return getProfiling().getAttributeValue();
 	}

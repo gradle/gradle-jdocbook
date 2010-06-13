@@ -73,8 +73,17 @@ public class DirectoryLayout {
 		return stagingDirectory;
 	}
 
+	private File fontsDirectory;
 
- 	// work directory ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	public File getFontsDirectory() {
+		if ( fontsDirectory == null ) {
+			fontsDirectory = new File( getStagingDirectory(), "fonts" );
+		}
+		return fontsDirectory;
+	}
+
+
+	// work directory ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	private File rootJDocBookWorkDirectory;
 
