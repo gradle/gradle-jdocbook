@@ -1,6 +1,7 @@
 package org.jboss.gradle.plugins.jdocbook;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.util.Locale;
 
 import org.gradle.api.DefaultTask;
@@ -11,6 +12,7 @@ import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.util.ObservableUrlClassLoader;
 import org.jboss.jdocbook.render.FormatOptions;
 import org.jboss.jdocbook.render.RenderingSource;
 
@@ -83,6 +85,19 @@ public class RenderTask extends DefaultTask {
 
 	@TaskAction
 	public void render() {
+		log.debug( "Extending script classloader with the dependencies from {}", JDocBookPlugin.STYLES_CONFIG_NAME );
+		ClassLoader classloader = getProject().getBuildscript().getClassLoader();
+		if( classloader instanceof ObservableUrlClassLoader ){
+			ObservableUrlClassLoader scriptClassloader = (ObservableUrlClassLoader)classloader;
+			for( File file : getProject().getConfigurations().getByName( JDocBookPlugin.STYLES_CONFIG_NAME ).getFiles() ) {
+				try {
+					scriptClassloader.addURL( file.toURI().toURL() );
+				}
+				catch ( MalformedURLException e ) {
+					log.warn( "Unable to retrieve file url [" + file.getAbsolutePath() + "]; ignoring" );
+				}
+			}
+		}
 		log.lifecycle( "rendering {} / {}", getLanguage(), getFormat().getName() );
 		plugin.getComponentRegistry().getRenderer().render( renderingSource, format );
 	}
