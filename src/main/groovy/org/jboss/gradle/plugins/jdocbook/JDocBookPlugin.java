@@ -22,6 +22,7 @@ import org.gradle.api.initialization.dsl.ScriptHandler;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
 import org.gradle.api.specs.Spec;
+import org.gradle.util.ObservableUrlClassLoader;
 import org.jboss.jdocbook.Configuration;
 import org.jboss.jdocbook.Environment;
 import org.jboss.jdocbook.JDocBookComponentRegistry;
@@ -445,5 +446,28 @@ public class JDocBookPlugin implements Plugin<Project> {
 
 	public Locale fromLanguageString(String languageStr) {
 		return TranslationUtils.parse( languageStr, configuration.getLocaleSeparator() );
+	}
+
+	private boolean scriptClassLoaderExtended = false;
+
+	/*package*/ void prepareForRendering() {
+		if ( scriptClassLoaderExtended ) {
+			return;
+		}
+		scriptClassLoaderExtended = true;
+		log.lifecycle( "Extending script classloader with the {} dependencies", JDocBookPlugin.STYLES_CONFIG_NAME );
+		ClassLoader classloader = getProject().getBuildscript().getClassLoader();
+		if( classloader instanceof ObservableUrlClassLoader ){
+			ObservableUrlClassLoader scriptClassloader = (ObservableUrlClassLoader)classloader;
+			for( File file : getProject().getConfigurations().getByName( JDocBookPlugin.STYLES_CONFIG_NAME ).getFiles() ) {
+				try {
+					scriptClassloader.addURL( file.toURI().toURL() );
+				}
+				catch ( MalformedURLException e ) {
+					log.warn( "Unable to retrieve file url [" + file.getAbsolutePath() + "]; ignoring" );
+				}
+			}
+		}
+
 	}
 }

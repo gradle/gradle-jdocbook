@@ -85,19 +85,7 @@ public class RenderTask extends DefaultTask {
 
 	@TaskAction
 	public void render() {
-		log.debug( "Extending script classloader with the dependencies from {}", JDocBookPlugin.STYLES_CONFIG_NAME );
-		ClassLoader classloader = getProject().getBuildscript().getClassLoader();
-		if( classloader instanceof ObservableUrlClassLoader ){
-			ObservableUrlClassLoader scriptClassloader = (ObservableUrlClassLoader)classloader;
-			for( File file : getProject().getConfigurations().getByName( JDocBookPlugin.STYLES_CONFIG_NAME ).getFiles() ) {
-				try {
-					scriptClassloader.addURL( file.toURI().toURL() );
-				}
-				catch ( MalformedURLException e ) {
-					log.warn( "Unable to retrieve file url [" + file.getAbsolutePath() + "]; ignoring" );
-				}
-			}
-		}
+		plugin.prepareForRendering();
 		log.lifecycle( "rendering {} / {}", getLanguage(), getFormat().getName() );
 		plugin.getComponentRegistry().getRenderer().render( renderingSource, format );
 	}
