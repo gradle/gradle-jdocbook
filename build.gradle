@@ -50,7 +50,7 @@ manifest.mainAttributes(
 def pomConfig = {
     name 'jDocBook Plugin for Gradle'
     description 'Plugin for integrating jDocBook into Gradle'
-    url 'http://github.com/sebersole/jdocbook-core'
+    url 'http://github.com/gradle/gradle-jdocbook'
     organization 'JBoss.org'
     issueManagement {
         // for the time being just use the github issue tracker
