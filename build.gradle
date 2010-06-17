@@ -14,7 +14,7 @@ apply plugin: 'org.gradle.idea'
 apply { url: 'https://loom.svn.sourceforge.net/svnroot/loom/shared/trunk/artifacts.gradle' } // sets up source and javadoc jar uploads
 
 group = 'org.jboss.jdocbook'
-version = '1.0.0-SNAPSHOT'
+version = '1.0.0'
 
 defaultTasks 'classes'
 
