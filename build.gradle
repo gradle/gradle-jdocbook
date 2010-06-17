@@ -9,7 +9,7 @@ buildscript {
 
 apply plugin: 'groovy'
 apply plugin: 'maven'  // used for 'install' and 'upload'/'deploy' task
-//apply plugin: 'eclipse'
+apply plugin: 'eclipse'
 apply plugin: 'org.gradle.idea'
 apply { url: 'https://loom.svn.sourceforge.net/svnroot/loom/shared/trunk/artifacts.gradle' } // sets up source and javadoc jar uploads
 
@@ -24,6 +24,10 @@ repositories {
     mavenRepo name: "mavenCache", urls: "file://" + System.getProperty('user.home') + "/.m2/repository/"
 }
 
+configurations {
+    deployerJars
+}
+
 dependencies {
     compile gradleApi()
     compile localGroovy()
@@ -31,5 +35,82 @@ dependencies {
     compile 'org.apache.ant:ant:1.7.0'
 
     groovy localGroovy()
+
+    deployerJars "org.apache.maven.wagon:wagon-http:1.0-beta-6"
 }
 
+manifest.mainAttributes(
+    provider: 'gradle',
+    'Implementation-Url': 'http://jboss.org',
+    'Implementation-Version': version,
+    'Implementation-Vendor': 'JBoss.org',
+    'Implementation-Vendor-Id': 'org.jboss'
+)
+
+def pomConfig = {
+    name 'jDocBook Plugin for Gradle'
+    description 'Plugin for integrating jDocBook into Gradle'
+    url 'http://github.com/sebersole/jdocbook-core'
+    organization 'JBoss.org'
+    issueManagement {
+        // for the time being just use the github issue tracker
+        system 'github'
+        url 'http://github.com/gradle/gradle-jdocbook/issues'
+    }
+    scm {
+        url "http://github.com/gradle/gradle-jdocbook"
+        connection "scm:git:https://github.com/gradle/gradle-jdocbook.git"
+        developerConnection "scm:git:git@github.com:gradle/gradle-jdocbook.git"
+    }
+    licenses {
+        license {
+            name 'The Apache Software License, Version 2.0'
+            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            distribution 'repo'
+        }
+    }
+    developers {
+        developer {
+            id 'sebersole'
+            name 'Steve Ebersole'
+        }
+        developer {
+            id 'stliu'
+            name 'Strong Liu'
+        }
+        developer {
+            id 'adammurdoch'
+            name 'Adam Murdoch'
+        }
+        developer {
+            id 'hansd'
+            name 'Hans Dockter'
+        }
+    }
+}
+
+configure(install.repositories.mavenInstaller) {
+    pom.project pomConfig
+}
+
+if ( ! hasProperty('MY_JBOSS_USER') ) {
+    MY_JBOSS_USER = "";
+}
+if ( ! hasProperty('MY_JBOSS_PASS') ) {
+    MY_JBOSS_PASS = "";
+}
+
+uploadArchives {
+    repositories.mavenDeployer {
+        name = 'jbossDeployer'
+        configuration = configurations.deployerJars
+        pom.project pomConfig
+        credentials = [userName: MY_JBOSS_USER, password: MY_JBOSS_PASS]
+        repository(url: "https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/") {
+            authentication(credentials)
+        }
+        snapshotRepository(url: "https://repository.jboss.org/nexus/content/repositories/snapshots/") {
+            authentication(credentials)
+        }
+    }
+}
