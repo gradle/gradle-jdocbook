@@ -31,7 +31,7 @@ configurations {
 dependencies {
     compile gradleApi()
     compile localGroovy()
-    compile 'org.jboss.jdocbook:jdocbook-core:1.0.0'
+    compile 'org.jboss.jdocbook:jdocbook-core:1.0.4-SNAPSHOT'
     compile 'org.apache.ant:ant:1.7.0'
 
     groovy localGroovy()
