@@ -6,7 +6,7 @@ buildscript {
       mavenRepo urls: "file://" + System.getProperty('user.home') + "/.m2/repository/"
   }
   dependencies {
-      classpath 'org.jboss.jdocbook:gradle-jdocbook:1.0.0-SNAPSHOT'
+      classpath 'org.jboss.jdocbook:gradle-jdocbook:1.0.1-SNAPSHOT'
   }
 }
 
