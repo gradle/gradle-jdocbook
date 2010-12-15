@@ -1,16 +1,7 @@
-buildscript {
-    repositories {
-        mavenRepo urls: 'http://gradle.artifactoryonline.com/gradle/plugins'
-    }
-    dependencies {
-        classpath "org.gradle.plugins:gradle-idea-plugin:0.3"
-    }
-}
-
 apply plugin: 'groovy'
 apply plugin: 'maven'  // used for 'install' and 'upload'/'deploy' task
 apply plugin: 'eclipse'
-apply plugin: 'org.gradle.idea'
+apply plugin: 'idea'
 apply { url: 'https://loom.svn.sourceforge.net/svnroot/loom/shared/trunk/artifacts.gradle' } // sets up source and javadoc jar uploads
 
 group = 'org.jboss.jdocbook'
@@ -31,7 +22,7 @@ configurations {
 dependencies {
     compile gradleApi()
     compile localGroovy()
-    compile 'org.jboss.jdocbook:jdocbook-core:1.0.0'
+    compile 'org.jboss.jdocbook:jdocbook-core:1.0.4-SNAPSHOT'
     compile 'org.apache.ant:ant:1.7.0'
 
     groovy localGroovy()
