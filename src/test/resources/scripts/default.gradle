@@ -1,0 +1,23 @@
+/**
+ * script for keeping the compatibility
+ */
+
+jdocbook {
+	masterSourceDocumentName = 'HIBERNATE_-_Relational_Persistence_for_Idiomatic_Java.xml'
+	translations = ['zh-CN']
+	format {
+		name = 'html_single'
+		finalName = 'index.html'
+		stylesheet = "classpath:/xslt/org/hibernate/jdocbook/xslt/xhtml-single.xsl"
+	}
+	format {
+		name = 'html'
+		finalName = 'index.html'
+		stylesheet = "classpath:/xslt/org/hibernate/jdocbook/xslt/xhtml.xsl"
+	}
+	format {
+		name = 'pdf'
+		finalName = "hibernate_reference.pdf"
+		stylesheet = "classpath:/xslt/org/hibernate/jdocbook/xslt/pdf.xsl"
+	}
+}

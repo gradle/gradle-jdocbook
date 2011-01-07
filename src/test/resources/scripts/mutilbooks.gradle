@@ -1,0 +1,38 @@
+/**
+ * script with mutil-books support
+ */
+
+jdocbook {
+	translations = ['zh-CN']
+	format('html_single') {
+		finalName = "index.html"
+		stylesheet = "classpath:/xslt/org/hibernate/jdocbook/xslt/xhtml-single.xsl"
+	}
+	
+	format('html') {
+		finalName = "index.html"
+		stylesheet = "classpath:/xslt/org/hibernate/jdocbook/xslt/xhtml.xsl"
+	}
+
+	manual {
+		//baseDirectory = baseDir + 'hibernate-manual' // CoC, scriptsdefault baseDirectory is baseDir+bookName
+		masterSourceDocumentName = 'HIBERNATE_-_Relational_Persistence_for_Idiomatic_Java.xml'
+		format {
+			name = "pdf"
+			finalName = "hibernate_reference.pdf"
+			stylesheet = "classpath:/xslt/org/hibernate/jdocbook/xslt/pdf.xsl"
+		} //add pdf format for this book
+	}
+	
+	devguide {
+		masterSourceDocumentName = 'Hibernate_Developer_Guide.xml'
+		formats.html_single.finalName = 'hibernate.html' //override the finalName defined in the share configuration
+		translations = [] //disable translation for this book
+	}
+
+	quickstart {
+		masterSourceDocumentName = 'Hibernate_Getting_Started_Guide.xml'
+		formats.html.enable = false //disable html format
+		translations = ['zh-CN', 'de-DE'] //override translations info
+	}
+}
