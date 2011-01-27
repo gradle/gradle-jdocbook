@@ -18,9 +18,9 @@ import org.jboss.gradle.plugins.jdocbook.JDocBookPlugin
  *
  * @author Strong Liu
  */
-class RenderTask extends org.jboss.gradle.plugins.jdocbook.tasks.BookTask {
+class RenderTask extends BookTask {
 
-	private static final Logger log = Logging.getLogger(org.jboss.gradle.plugins.jdocbook.tasks.RenderTask.class);
+	private static final Logger log = Logging.getLogger(RenderTask.class);
 
 //	Book book;
 	@Input

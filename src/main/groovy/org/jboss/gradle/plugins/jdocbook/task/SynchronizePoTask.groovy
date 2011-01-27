@@ -1,4 +1,4 @@
-package org.jboss.gradle.plugins.jdocbook.tasks
+package org.jboss.gradle.plugins.jdocbook.task
 
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging

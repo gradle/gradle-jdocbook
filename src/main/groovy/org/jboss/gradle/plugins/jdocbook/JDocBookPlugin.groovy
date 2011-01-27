@@ -8,11 +8,11 @@ import org.gradle.api.Task
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.jboss.gradle.plugins.jdocbook.book.Book
-import org.jboss.gradle.plugins.jdocbook.tasks.RenderTask
-import org.jboss.gradle.plugins.jdocbook.tasks.StyleStagingTask
-import org.jboss.gradle.plugins.jdocbook.tasks.SynchronizePoTask
-import org.jboss.gradle.plugins.jdocbook.tasks.SynchronizePotTask
-import org.jboss.gradle.plugins.jdocbook.tasks.TranslateTask
+import org.jboss.gradle.plugins.jdocbook.task.RenderTask
+import org.jboss.gradle.plugins.jdocbook.task.StyleStagingTask
+import org.jboss.gradle.plugins.jdocbook.task.SynchronizePoTask
+import org.jboss.gradle.plugins.jdocbook.task.SynchronizePotTask
+import org.jboss.gradle.plugins.jdocbook.task.TranslateTask
 
 /**
  * The Gradle plugin for jDocbook

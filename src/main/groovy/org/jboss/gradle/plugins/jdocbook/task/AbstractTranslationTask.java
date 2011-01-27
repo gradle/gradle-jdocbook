@@ -1,4 +1,4 @@
-package org.jboss.gradle.plugins.jdocbook.tasks;
+package org.jboss.gradle.plugins.jdocbook.task;
 
 import java.io.File;
 import java.util.Locale;

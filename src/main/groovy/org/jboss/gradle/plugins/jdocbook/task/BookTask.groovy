@@ -1,4 +1,4 @@
-package org.jboss.gradle.plugins.jdocbook.tasks
+package org.jboss.gradle.plugins.jdocbook.task
 
 import org.gradle.api.DefaultTask
 import org.jboss.gradle.plugins.jdocbook.book.Book

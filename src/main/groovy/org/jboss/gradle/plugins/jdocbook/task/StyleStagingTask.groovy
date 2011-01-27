@@ -43,8 +43,8 @@ import org.jboss.gradle.plugins.jdocbook.book.Book
  * @author Steve Ebersole
  */
 @SuppressWarnings(["UnusedDeclaration"])
-public class StyleStagingTask extends org.jboss.gradle.plugins.jdocbook.tasks.BookTask {
-	private static final Logger log = Logging.getLogger(org.jboss.gradle.plugins.jdocbook.tasks.StyleStagingTask.class);
+public class StyleStagingTask extends BookTask {
+	private static final Logger log = Logging.getLogger(StyleStagingTask.class);
 	org.jboss.gradle.plugins.jdocbook.book.Book book
 	private JDocBookPlugin plugin;
 	@Input
