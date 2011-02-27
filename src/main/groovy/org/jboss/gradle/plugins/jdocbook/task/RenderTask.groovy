@@ -4,12 +4,14 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.util.ObservableUrlClassLoader
 import org.jboss.gradle.plugins.jdocbook.JDocBookPlugin
 import org.jboss.gradle.plugins.jdocbook.book.Book
 import org.jboss.jdocbook.render.RenderingSource
+import org.gradle.api.tasks.OutputDirectory
 
 /**
  * Task for performing DocBook rendering.
@@ -25,10 +27,12 @@ class RenderTask extends BookTask implements RenderingSource {
 		this.format = format
 	}
 
-	@Input
-	public String getFormatName() {
-		return format.name
-	}
+	@Input public String getFormatName() {format.name}
+
+	@Input @Optional public String getFormatFinalName() {format.finalName}
+
+	@Input @Optional public String getStylesheet() {return format.stylesheet}
+
 
 	@TaskAction
 	public void render() {
@@ -67,4 +71,20 @@ class RenderTask extends BookTask implements RenderingSource {
 		existsOrNull(book.environment.getWorkDirPerLang("xsl-fo"))
 	}
 
+	@InputFile
+	public File resolveSourceDocument() {
+		if ( book.profiling.enabled ) {
+			return new File(book.environment.getProfileDirPerLang(lang), book.masterSourceDocumentName)
+		}
+		else if ( lang == book.masterLanguage ) {
+			return book.environment.rootDocumentFile
+		}
+		else {
+			return new File(book.environment.getWorkDirPerLang(lang), book.masterSourceDocumentName)
+		}
+	}
+	@OutputDirectory
+	File resolvePublishingBaseDirectory() {
+		book.environment.getPublishDirPerLang(lang)
+	}
 }

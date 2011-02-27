@@ -9,6 +9,7 @@ import org.gradle.api.tasks.TaskAction
 import org.jboss.jdocbook.Profiling
 import org.jboss.jdocbook.profile.ProfilingSource
 import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.OutputFile
 
 /**
  * Task for performing DocBook profiling
@@ -52,7 +53,7 @@ public class ProfileTask extends BookTask implements ProfilingSource {
 			new File(book.environment.getWorkDirPerLang(lang),book.masterSourceDocumentName)
 		}
 	}
-	@InputFile
+	@OutputFile
 	public File resolveProfiledDocumentFile() {
 		return new File(getProfileOutputDirectory(), book.masterSourceDocumentName);
 	}

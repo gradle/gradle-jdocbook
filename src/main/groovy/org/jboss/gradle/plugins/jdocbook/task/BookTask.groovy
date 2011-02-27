@@ -35,21 +35,6 @@ abstract class BookTask extends DefaultTask {
 		return book.name
 	}
 
-	@InputFile
-	public File resolveSourceDocument() {
-		book.environment.rootDocumentFile
-	}
-
-	@OutputDirectory
-	File resolvePublishingBaseDirectory() {
-		book.environment.getPublishDirPerLang(lang)
-	}
-
-	@InputDirectory
-	public File getSourceDirectory() {
-		book.environment.baseSourceDirectory
-	}
-
 	protected File existsOrNull(File file) {
 		return file.exists() ? file : null
 	}
