@@ -1,10 +1,14 @@
 package org.jboss.gradle.plugins.jdocbook.book
 
-import java.util.Map.Entry
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
 import org.gradle.util.ConfigureUtil
 import org.jboss.gradle.plugins.jdocbook.JDocBookConvention
+import org.jboss.gradle.plugins.jdocbook.JDocBookPlugin
 import org.jboss.jdocbook.JDocBookComponentRegistry
+import org.jboss.jdocbook.render.FormatOptions
 
 /**
  * Book is the main concept in this plugin, for each $Book, it contains all the info that used in the document generation
@@ -14,66 +18,90 @@ import org.jboss.jdocbook.JDocBookComponentRegistry
  * @author Strong Liu
  */
 class Book {
-	public static final String DEFAULT_BOOK_NAME = "COMMON_BOOK"
-	String name
-	FormatOptionsContainer formats
+	Logger log = Logging.getLogger(Book);
 	def masterSourceDocumentName = "book.xml"
-
 	def masterLanguage = "en-US"
+	String name
+	NamedDomainObjectContainer<FormatOption> formats
 	def translations = []
-	def concrete = true
-	BookStructure sourceSet
-	JDocBookComponentRegistry componentRegistry
-	JDocBookConvention convention
-	Project project
 	@Delegate
 	BookConfiguration configuration
+	def baseDirName
+	def potDirName
+	def imagesDirName
+	def cssDirName
+	def fontsDirName
 
-	public Book(String name, JDocBookConvention convention, Book parent = null) {
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ book structure
+
+	def concrete = true
+	JDocBookComponentRegistry componentRegistry
+	BookEnvironment environment
+	Project project
+
+
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	public Book(String name, Project project) {
 		this.name = name
-		this.convention = convention
-		this.project = convention.project
-		this.formats = convention.generator.newInstance(FormatOptionsContainer.class, convention.generator)
-		mergeParent(parent)
-		sourceSet = new BookStructure(this)
-		configuration = new BookConfiguration(convention.project);
-		componentRegistry = new JDocBookComponentRegistry(new EnvironmentImpl(this,convention.project), configuration)
-	}
-	//FIXME find a better(groovy) way to do this clone
+		this.project = project
+		this.baseDirName = "src/main/docbook/$name"
+		this.potDirName = baseDirName + "/pot"
+		this.formats = project.container(FormatOption) { formatName -> new FormatOption(formatName)}
+		this.configuration = new BookConfiguration(project.version);
+		this.environment = new BookEnvironment(this, project)
+		this.componentRegistry = new JDocBookComponentRegistry(environment, configuration)
 
-	private void mergeParent(Book parent) {
-		if ( parent == null ) return;
-		parent.concrete = false
-		initFormatOptionsContainerWithDefault(parent.formats)
-		if ( parent.translations != null ) {
-			translations.addAll(parent.translations)
-		}
-		//todo merge configuration
-	}
-
-	private void initFormatOptionsContainerWithDefault(FormatOptionsContainer defaultFormats) {
-		if ( defaultFormats == null ) return;
-		Map<String, FormatOption> map = defaultFormats.asMap
-		for ( Entry<String, FormatOption> entry: map ) {
-			FormatOption fo = new FormatOption(entry.key);
-			fo.finalName = entry.value.finalName
-			fo.stylesheet = entry.value.stylesheet
-			formats.addObject entry.key, fo
-		}
 	}
 
 	def format(Closure closure) {
-		FormatOption fo = new FormatOption()
-		ConfigureUtil.configure closure, fo
-		format fo.name, closure
+		format(null,closure)
 	}
 
 	def format(String name, Closure closure) {
-		formats.add name, closure
+		format(ConfigureUtil.configure( closure ,new FormatOption(name)))
 	}
 
-	public String getDisplayName() {
-		return (name == DEFAULT_BOOK_NAME) ? "" : name;
+	def format(FormatOption f) {
+
+		formats.addObject(f.name, new FormatOption(f))
 	}
+
+	static class FormatOption implements FormatOptions {
+		String name
+		String finalName
+		String stylesheet
+		boolean enable = true
+
+		@Override
+		String getTargetFinalName() {
+			return finalName
+		}
+
+		@Override
+		String getStylesheetResource() {
+			return stylesheet
+		}
+
+
+		FormatOption() {
+		}
+
+		FormatOption(String name) {
+			this.name = name
+		}
+
+		FormatOption(FormatOption parent) {
+			this.name = parent.name
+			this.finalName = parent.finalName
+			this.stylesheet = parent.stylesheet
+		}
+
+		@Override
+		public String toString() {
+			return "$name";
+		}
+	}
+
 }
 

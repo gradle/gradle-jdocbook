@@ -24,18 +24,16 @@
 package org.jboss.gradle.plugins.jdocbook.task;
 
 
-import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Configuration.State
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.specs.Spec
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.jboss.gradle.plugins.jdocbook.JDocBookPlugin
-import org.jboss.gradle.plugins.jdocbook.book.Book
 
 /**
  * Applies staging of style artifacts
@@ -44,33 +42,13 @@ import org.jboss.gradle.plugins.jdocbook.book.Book
  */
 @SuppressWarnings(["UnusedDeclaration"])
 public class StyleStagingTask extends BookTask {
-	private static final Logger log = Logging.getLogger(StyleStagingTask.class);
-	org.jboss.gradle.plugins.jdocbook.book.Book book
-	private JDocBookPlugin plugin;
+	Logger log = Logging.getLogger(StyleStagingTask);
 	@Input
 	@Optional
-	def jdocbookStyle=project.configurations."$JDocBookPlugin.STYLES_CONFIG_NAME"
+	def jdocbookStyle = project.configurations."$JDocBookPlugin.STYLES_CONFIG_NAME"
 
-
-
-	@InputFiles
-	@Optional
-	public File getBookImages() {
-		project.file(book.sourceSet.images())
-	}
-
-	@InputFiles
-	@Optional
-	public File getBookCss() {
-		project.file(book.sourceSet.css())
-	}
-
-	@OutputDirectory
-	@Optional
-	public File getStagingDirectory() {
-		return project.file(book.sourceSet.stage());
-	}
 	//FIXME skip this action if no jdocbook style defined
+
 	@TaskAction
 	public void stageJDocbookStyles() {
 		log.lifecycle("Staging styles to {}", getStagingDirectory());
@@ -88,10 +66,10 @@ public class StyleStagingTask extends BookTask {
 	@TaskAction
 	public void stageBookImages() {
 		def image = getBookImages()
-		if ( image!=null && image.exists() && image.list() ) {
+		if ( image != null && image.exists() && image.list() ) {
 			log.lifecycle("Staging project images to {}", getStagingDirectory());
 			project.copy {
-				into project.file(book.sourceSet.stage()+'/images'+'/'+getBookImages().name)
+				into project.file(book.environment.stageDirName + '/images' + '/' + getBookImages().name)
 				from getBookImages()
 			}
 		}
@@ -100,14 +78,35 @@ public class StyleStagingTask extends BookTask {
 	@TaskAction
 	public void stageBookCSS() {
 		def css = getBookCss()
-		if ( css!=null && css.exists() && css.list() ) {
+		if ( css != null && css.exists() && css.list() ) {
 			log.lifecycle("Staging project css to {}", getStagingDirectory());
 			project.copy {
-				into project.file(book.sourceSet.stage()+'/css'+'/'+getBookCss().name)
+				into project.file(book.environment.stageDirName + '/css' + '/' + getBookCss().name)
 				from getBookCss()
 			}
 		}
 	}
+
+	@InputDirectory
+	@Optional
+	public File getBookImages() {
+		existsOrNull(book.environment.imagesDirectory)
+	}
+
+	@InputDirectory
+	@Optional
+	public File getBookCss() {
+		existsOrNull(book.environment.cssDirectory)
+	}
+
+	@OutputDirectory
+	public File getStagingDirectory() {
+		if ( !book.environment.stagingDirectory.exists() ) {
+			book.environment.stagingDirectory.mkdir()
+		}
+		return book.environment.stagingDirectory
+	}
+
 
 	Spec<File> jdocbookStyleSpec = new Spec<File>() {
 		boolean isSatisfiedBy(File file) {

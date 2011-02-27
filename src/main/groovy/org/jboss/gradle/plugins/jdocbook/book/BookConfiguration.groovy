@@ -1,7 +1,6 @@
 package org.jboss.gradle.plugins.jdocbook.book
 
 import java.text.SimpleDateFormat
-import org.gradle.api.Project
 import org.gradle.util.ConfigureUtil
 import org.jboss.jdocbook.Configuration
 import org.jboss.jdocbook.Profiling
@@ -12,9 +11,10 @@ import org.jboss.jdocbook.ValueInjection
  * @author: Strong Liu
  */
 class BookConfiguration implements Configuration {
-	Project project
-	BookConfiguration(Project project){
-		this.project = project
+	def version
+
+	BookConfiguration(version) {
+		this.version = version
 	}
 	// IMAGE URI HANDLING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	boolean useRelativeImageUris = true;
@@ -38,10 +38,11 @@ class BookConfiguration implements Configuration {
 	def applyStandardInjectionValues = true;
 	def injectionDateFormat = "yyyy-MM-dd"
 	LinkedHashSet<ValueInjection> valueInjections = new LinkedHashSet<ValueInjection>();
+
 	@Override
 	LinkedHashSet<ValueInjection> getValueInjections() {
 		if ( applyStandardInjectionValues ) {
-			valueInjections.add(new ValueInjection("version", project.getVersion().toString()));
+			valueInjections.add(new ValueInjection("version", version));
 			SimpleDateFormat dateFormat = new SimpleDateFormat(injectionDateFormat);
 			valueInjections.add(new ValueInjection("today", dateFormat.format(new Date())));
 		}

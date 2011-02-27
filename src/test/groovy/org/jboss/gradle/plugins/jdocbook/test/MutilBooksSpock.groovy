@@ -1,5 +1,7 @@
 package org.jboss.gradle.plugins.jdocbook.test
 
+import org.jboss.gradle.plugins.jdocbook.book.Book
+
 /**
  *
  * @author: Strong Liu
@@ -21,16 +23,17 @@ class MutilBooksSpock extends AbstractJDocbookSpock {
 		}
 		expect:
 		def tasks = project.tasks
-		tasks.getByName('buildDocs')
+		tasks.all{
+			println " ---> task ($name) "
+		}
+		//tasks.getByName('renderDocBook_devguide_en-US_html').execute()
+		List list = new ArrayList()
+		list.add(tasks.buildDocs)
+		project.getGradle().getTaskGraph().execute(list)
+
 	}
 
 
-	def "find all concrete books"() {
-		applyScript DEFAULT_SCRIPT
-		expect:
-		convention.books.all.size() == 4
-		convention.books.findAll({it.concrete}).size() == 3
-	}
 
 
 	def "mutil books configure support"() {
@@ -38,9 +41,11 @@ class MutilBooksSpock extends AbstractJDocbookSpock {
 		expect:
 		convention != null
 		convention.books != null
-		convention.books.commonBook != null
-		def common = convention.books.COMMON_BOOK
+		convention.commonBook != null
+		Book common = convention.commonBook
+
 		common != null
+		common.concrete == false
 		common.masterSourceDocumentName == "book.xml"
 		common.formats.each {format ->
 			checkFormat(format)
@@ -51,6 +56,7 @@ class MutilBooksSpock extends AbstractJDocbookSpock {
 		manual != null
 		manual.masterSourceDocumentName == "HIBERNATE_-_Relational_Persistence_for_Idiomatic_Java.xml"
 		manual.formats.each {format ->
+			println format.name
 			checkFormat(format)
 		}
 		manual.translations == ["zh-CN"]

@@ -1,18 +1,14 @@
 package org.jboss.gradle.plugins.jdocbook.task
 
-import org.gradle.api.DefaultTask
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
-import org.jboss.gradle.plugins.jdocbook.JDocBookPlugin
-import org.jboss.gradle.plugins.jdocbook.book.Book
 import org.jboss.jdocbook.Profiling
 import org.jboss.jdocbook.profile.ProfilingSource
-import org.jboss.jdocbook.util.TranslationUtils
+import org.gradle.api.tasks.InputFile
 
 /**
  * Task for performing DocBook profiling
@@ -20,30 +16,11 @@ import org.jboss.jdocbook.util.TranslationUtils
  * @author Steve Ebersole
  */
 //@SuppressWarnings({ "UnusedDeclaration" })
-public class ProfileTask extends DefaultTask {
-	private static final Logger log = Logging.getLogger(ProfileTask.class);
-
-	private JDocBookPlugin plugin;
-	private String language;
-	private ProfilingSourceImpl profilingSource;
-	private Book book
-
-	public void configure(Book book, String language) {
-		this.book = book
-		this.language = language;
-		this.profilingSource = new ProfilingSourceImpl();
-		this.plugin = project.plugins.getPlugin(JDocBookPlugin)
-	}
-
-	@Input
-	public String getLanguage() {
-		return language;
-	}
-
-//	@Input
+public class ProfileTask extends BookTask implements ProfilingSource {
+	Logger log = Logging.getLogger(ProfileTask);
 
 	public Profiling getProfiling() {
-		return book.configuration.profiling
+		return book.profiling
 	}
 // temporary ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // it is temporary that these flattened attributes are marked as @Input rather than the getProfiling() attribute
@@ -67,45 +44,29 @@ public class ProfileTask extends DefaultTask {
 	}
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	@InputDirectory
-	public File getProfileInputDirectory() {
-		// todo : this is slightly different between the case of master and translation.
-		// 		for master the more correct thing is the list of files
-		//		for translation, the translation output dir is probably enough.
-//		return getLanguage().equals( plugin.getConfiguration().getMasterLanguage() )
-//				? plugin.getDirectoryLayout().getMasterSourceDirectory()
-//				: plugin.getDirectoryLayout().getTranslationDirectory( getLanguage() );
-		if ( getLanguage() == book.masterLanguage ) {
-			return book.sourceSet.base()
-		}
-		else {
-			return book.sourceSet.work(getLanguage())
+	@InputFile
+	public File resolveDocumentFile() {
+		if ( lang== book.masterLanguage ) {
+			return book.environment.rootDocumentFile
+		}else{
+			new File(book.environment.getWorkDirPerLang(lang),book.masterSourceDocumentName)
 		}
 	}
+	@InputFile
+	public File resolveProfiledDocumentFile() {
+		return new File(getProfileOutputDirectory(), book.masterSourceDocumentName);
+	}
+
 
 	@OutputDirectory
 	public File getProfileOutputDirectory() {
-		return project.file(book.sourceSet.profile(getLanguage()))
+		book.environment.getProfileDirPerLang(lang)
 	}
 
 	@TaskAction
-//	@SuppressWarnings({ "UnusedDeclaration" })
 	public void profile() {
-		log.lifecycle("profiling {} into {}", getLanguage(), getProfileOutputDirectory());
-		book.componentRegistry.profiler.profile(profilingSource);
+		log.lifecycle("profiling {} into {}", lang, getProfileOutputDirectory());
+		book.componentRegistry.profiler.profile(this);
 	}
 
-	private class ProfilingSourceImpl implements ProfilingSource {
-		public Locale getLanguage() {
-			return TranslationUtils.parse(language, book.localeSeparator)
-		}
-
-		public File resolveDocumentFile() {
-			return new File(getProfileInputDirectory(),book.masterSourceDocumentName);
-		}
-
-		public File resolveProfiledDocumentFile() {
-			return new File(getProfileOutputDirectory(), book.masterSourceDocumentName);
-		}
-	}
 }

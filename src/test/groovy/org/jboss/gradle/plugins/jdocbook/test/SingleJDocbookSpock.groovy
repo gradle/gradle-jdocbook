@@ -6,13 +6,21 @@ package org.jboss.gradle.plugins.jdocbook.test
  */
 class SingleJDocbookSpock extends AbstractJDocbookSpock {
 	def DEFAULT_SCRIPT = "/scripts/default.gradle"
+	def "check if tasks are well configured"(){
+		applyScript DEFAULT_SCRIPT
+		expect:
+		project.tasks.all{
+			println it.name
+		}
+		project.tasks.buildDocs.execute()
+	}
 	def "make sure compatibility does not broken"() {
 		applyScript DEFAULT_SCRIPT
 		expect:
 		convention != null
 		convention.books != null
-		convention.books.commonBook != null
-		def book = convention.books.COMMON_BOOK
+		convention.commonBook != null
+		def book = convention.commonBook
 		book != null
 		book.formats.each {format ->
 			checkFormat(format)

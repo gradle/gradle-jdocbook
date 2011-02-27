@@ -1,44 +1,28 @@
 package org.jboss.gradle.plugins.jdocbook.task
 
-import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.util.ObservableUrlClassLoader
-import org.jboss.gradle.plugins.jdocbook.book.Book
-import org.jboss.jdocbook.render.FormatOptions
-import org.jboss.jdocbook.render.RenderingSource
-import org.jboss.jdocbook.util.TranslationUtils
 import org.jboss.gradle.plugins.jdocbook.JDocBookPlugin
+import org.jboss.gradle.plugins.jdocbook.book.Book
+import org.jboss.jdocbook.render.RenderingSource
 
 /**
  * Task for performing DocBook rendering.
  *
  * @author Strong Liu
  */
-class RenderTask extends BookTask {
-
-	private static final Logger log = Logging.getLogger(RenderTask.class);
-
-//	Book book;
-	@Input
-	def language;
-
+class RenderTask extends BookTask implements RenderingSource {
+	Logger log = Logging.getLogger(RenderTask);
 	def format;
-	RenderingSourceImpl renderingSource
 
 	public void configure(Book book, def language, def format) {
-		this.book = book
-		this.language = language
+		configure(book, language)
 		this.format = format
-		this.renderingSource = new RenderingSourceImpl(book, project, language)
-	}
-
-	@Input
-	public String getBookName() {
-		return book.name
 	}
 
 	@Input
@@ -49,8 +33,17 @@ class RenderTask extends BookTask {
 	@TaskAction
 	public void render() {
 		prepareForRendering()
-		log.lifecycle("rendering {} / {}", language, format.name);
-		book.componentRegistry.renderer.render(renderingSource, (FormatOptions) format)
+		log.lifecycle("rendering Book({}) {} / {}", book.name, lang, format.name);
+		book.environment.fontDirectories.each {
+			log.lifecycle it.path
+		}
+		for ( File f: book.environment.fontDirectories ) {
+			log.lifecycle("1." + f.path)
+			for ( File t: f.listFiles() ) {
+				log.lifecycle("2." + t.path)
+			}
+		}
+		book.componentRegistry.renderer.render(this, format)
 	}
 
 	private boolean scriptClassLoaderExtended = false;
@@ -72,44 +65,15 @@ class RenderTask extends BookTask {
 					log.warn("Unable to retrieve file url [" + file.getAbsolutePath() + "]; ignoring");
 				}
 			}
-			Thread.currentThread().setContextClassLoader classloader
+			Thread.currentThread().setContextClassLoader(classloader)
 		}
 	}
 
-	@OutputDirectory
-	File getPublishingDirectory() {
-		renderingSource.resolvePublishingBaseDirectory()
+	@Override
+	@InputDirectory
+	@Optional
+	File getXslFoDirectory() {
+		existsOrNull(book.environment.getWorkDirPerLang("xsl-fo"))
 	}
 
-	class RenderingSourceImpl implements RenderingSource {
-		Book book
-		Project project
-		def lang
-
-		RenderingSourceImpl(Book book, Project project, def lang) {
-			this.book = book
-			this.project = project
-			this.lang = lang
-		}
-
-		@Override
-		Locale getLanguage() {
-			return TranslationUtils.parse(lang, book.localeSeparator)
-		}
-
-		@Override
-		File resolveSourceDocument() {
-			return project.file(book.sourceSet.master())
-		}
-
-		@Override
-		File resolvePublishingBaseDirectory() {
-			return project.file(book.sourceSet.publish(lang))
-		}
-
-		@Override
-		File getXslFoDirectory() {
-			return null
-		}
-	}
 }

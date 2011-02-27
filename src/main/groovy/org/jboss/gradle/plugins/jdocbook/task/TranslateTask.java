@@ -18,14 +18,9 @@ import org.gradle.api.tasks.TaskAction;
 public class TranslateTask extends AbstractTranslationTask {
 	private static final Logger log = Logging.getLogger( TranslateTask.class );
 
-	@InputDirectory
-	public File getMasterSourceDirectory() {
-		return getProject().file(getBook().getSourceSet().base());
-	}
-
 	@TaskAction
 	public void translate() {
-		log.lifecycle( "translating {} into {}", getTranslationLanguage(), resolveTranslatedXmlDirectory() );
+		log.lifecycle( "translating {} into {}", getLang(), resolveTranslatedXmlDirectory() );
 		getBook().getComponentRegistry().getTranslator().translate( this );
 	}
 }

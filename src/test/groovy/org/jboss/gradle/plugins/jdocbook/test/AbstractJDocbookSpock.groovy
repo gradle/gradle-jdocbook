@@ -5,6 +5,8 @@ import org.jboss.gradle.plugins.jdocbook.JDocBookPlugin
 import org.jboss.gradle.plugins.jdocbook.test.util.HelperUtil
 import org.jboss.gradle.plugins.jdocbook.test.util.Resources
 import spock.lang.Specification
+import org.jboss.gradle.plugins.jdocbook.JDocBookConvention
+import org.gradle.api.logging.LogLevel
 
 /**
  *
@@ -13,11 +15,12 @@ import spock.lang.Specification
 class AbstractJDocbookSpock extends Specification {
 	Project project
 	JDocBookPlugin plugin
-	def convention
+	JDocBookConvention convention
 	Resources resources = new Resources(this.class)
 
 	def setup() {
 		project = HelperUtil.createRootProject(new File("build/tmp/tests/" + this.getClass().getSimpleName()))
+		project.getLogging().setLevel(LogLevel.DEBUG)
 		plugin = project.plugins.apply(JDocBookPlugin)
 		convention = project.convention.plugins.jdocbook
 	}

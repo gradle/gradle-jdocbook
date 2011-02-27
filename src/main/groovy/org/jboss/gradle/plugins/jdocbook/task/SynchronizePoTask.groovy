@@ -13,16 +13,16 @@ import org.gradle.api.tasks.TaskAction
  */
 @SuppressWarnings(["UnusedDeclaration"])
 public class SynchronizePoTask extends AbstractTranslationTask {
-	private static final Logger log = Logging.getLogger(SynchronizePoTask.class);
+	Logger log = Logging.getLogger(SynchronizePoTask);
 
 	@InputDirectory
 	public File getTranslationPoDirectory() {
-		project.file(book.sourceSet.lang(getTranslationLanguage()))
+		resolvePoDirectory()
 	}
 
 	@TaskAction
 	public void synchronize() {
-		log.lifecycle("Starting PO synchronization [{}]", getTranslationLanguage());
+		log.lifecycle("Starting PO synchronization [{}]", lang);
 		book.componentRegistry.poSynchronizer.synchronizePo(this);
 	}
 }
