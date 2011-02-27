@@ -38,9 +38,7 @@ class BookEnvironment implements Environment, MasterLanguageDescriptor {
 		this.stageDirName = outputDirName + "/stage"
 		this.publishDirName = outputDirName + "/publish"
 		this.profileDirName = outputDirName + "/profile"
-
 	}
-
 
 	@Override
 	Locale getLanguage() {

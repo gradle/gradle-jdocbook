@@ -11,10 +11,10 @@ import org.jboss.jdocbook.ValueInjection
  * @author: Strong Liu
  */
 class BookConfiguration implements Configuration {
-	def version
+	def Book book
 
-	BookConfiguration(version) {
-		this.version = version
+	BookConfiguration(Book book) {
+		this.book = book
 	}
 	// IMAGE URI HANDLING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	boolean useRelativeImageUris = true;
@@ -42,11 +42,14 @@ class BookConfiguration implements Configuration {
 	@Override
 	LinkedHashSet<ValueInjection> getValueInjections() {
 		if ( applyStandardInjectionValues ) {
-			valueInjections.add(new ValueInjection("version", version));
+			valueInjections.add(new ValueInjection("version", book.version));
 			SimpleDateFormat dateFormat = new SimpleDateFormat(injectionDateFormat);
 			valueInjections.add(new ValueInjection("today", dateFormat.format(new Date())));
 		}
 		return valueInjections;
+	}
+	public void valueInjection(String name, String value){
+		valueInjections<< new ValueInjection(name,value)
 	}
 	/**
 	 * Allow configuration by closure

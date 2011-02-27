@@ -13,7 +13,7 @@ import org.gradle.api.tasks.OutputDirectory
  *
  * @author: Strong Liu
  */
-class BookTask extends DefaultTask {
+abstract class BookTask extends DefaultTask {
 	Book book
 	@Input
 	@Optional

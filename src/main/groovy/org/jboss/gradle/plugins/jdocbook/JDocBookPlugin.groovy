@@ -18,10 +18,8 @@ public class JDocBookPlugin implements Plugin<Project> {
 	Logger log = Logging.getLogger(JDocBookPlugin);
 	public static final String STYLES_CONFIG_NAME = "jdocbookStyles";
 	public static final String DOCBOOK_CONFIG_NAME = "jdocbook";
-	Project project
 
 	public void apply(final Project project) {
-		this.project = project
 		applyConfiguration(project)
 		def books = project.container(Book) { name -> new Book(name, project) }
 		JDocBookConvention convention = new JDocBookConvention(project, books)

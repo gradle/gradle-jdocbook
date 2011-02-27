@@ -1,10 +1,33 @@
+buildscript {
+  repositories {
+      mavenCentral()
+      mavenRepo name: "jboss", urls: "http://repository.jboss.org/nexus/content/groups/public/"
+      mavenRepo urls: "file://" + System.getProperty('user.home') + "/.m2/repository/"
+  }
+  dependencies {
+      classpath 'org.jboss.jdocbook:gradle-jdocbook:1.1.0-SNAPSHOT'
+  }
+}
+// the stylesheets used in the format are came from hibernate-jdocbook-style
+// but they're optional, you can use others or the default come from docbook-xsl
+dependencies {
+	jdocbookStyles "org.hibernate:hibernate-jdocbook-style:2.0.1"
+}
+repositories {
+    mavenCentral()
+    mavenRepo name: "jboss", urls: "http://repository.jboss.org/nexus/content/groups/public/"
+    mavenRepo name: "mavenCache", urls: "file://" + System.getProperty('user.home') + "/.m2/repository/"
+}
+
 /**
  * script for keeping the compatibility
  */
-
+/**
+ * the project structure is supposed to be src/main/docbook/en-US/[images|fonts|css]
+ */
 jdocbook {
 	masterSourceDocumentName = 'HIBERNATE_-_Relational_Persistence_for_Idiomatic_Java.xml'
-	translations = ['zh-CN']
+	translations = ['zh-CN']  //or translate 'zh-CN'
 	format {
 		name = 'html_single'
 		finalName = 'index.html'

@@ -20,6 +20,10 @@ import org.jboss.jdocbook.render.FormatOptions
 class Book {
 	Logger log = Logging.getLogger(Book);
 	def masterSourceDocumentName = "book.xml"
+	/**
+	 * default language of the book is en-US, if the book is not language aware, then this should be
+	 * override to ''
+	 */
 	def masterLanguage = "en-US"
 	String name
 	NamedDomainObjectContainer<FormatOption> formats
@@ -31,24 +35,21 @@ class Book {
 	def imagesDirName
 	def cssDirName
 	def fontsDirName
-
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ book structure
-
+	def version
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~ internal use only
 	def concrete = true
 	JDocBookComponentRegistry componentRegistry
 	BookEnvironment environment
 	Project project
-
-
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	public Book(String name, Project project) {
 		this.name = name
 		this.project = project
 		this.baseDirName = "src/main/docbook/$name"
 		this.potDirName = baseDirName + "/pot"
 		this.formats = project.container(FormatOption) { formatName -> new FormatOption(formatName)}
-		this.configuration = new BookConfiguration(project.version);
+		this.version = project.version
+		this.configuration = new BookConfiguration(this);
 		this.environment = new BookEnvironment(this, project)
 		this.componentRegistry = new JDocBookComponentRegistry(environment, configuration)
 
@@ -63,8 +64,10 @@ class Book {
 	}
 
 	def format(FormatOption f) {
-
 		formats.addObject(f.name, new FormatOption(f))
+	}
+	def translation(lang){
+		translations << lang
 	}
 
 	static class FormatOption implements FormatOptions {

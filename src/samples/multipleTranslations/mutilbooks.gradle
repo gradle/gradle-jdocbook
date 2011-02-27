@@ -15,24 +15,30 @@ jdocbook {
 	}
 
 	manual {
-		//baseDirectory = baseDir + 'hibernate-manual' // CoC, scriptsdefault baseDirectory is baseDir+bookName
+		//override the default location (src/main/docbook/manual) of this book
+		baseDirName = "src/reference"
 		masterSourceDocumentName = 'HIBERNATE_-_Relational_Persistence_for_Idiomatic_Java.xml'
+		//generate pdf/html/html-single formats documents for this book
 		format {
 			name = "pdf"
 			finalName = "hibernate_reference.pdf"
 			stylesheet = "classpath:/xslt/org/hibernate/jdocbook/xslt/pdf.xsl"
-		} //add pdf format for this book
+		}
 	}
 	
 	devguide {
 		masterSourceDocumentName = 'Hibernate_Developer_Guide.xml'
-		formats.html_single.finalName = 'hibernate.html' //override the finalName defined in the share configuration
-		translations = [] //disable translation for this book
+		//override the finalName defined in the shared configuration
+		formats.html_single.finalName = 'hibernate.html'
+		//disable translation for this book
+		translations = []
 	}
 
 	quickstart {
 		masterSourceDocumentName = 'Hibernate_Getting_Started_Guide.xml'
-		formats.html.enable = false //disable html format
-		translations = ['zh-CN', 'de-DE'] //override translations info
+		//disable html format
+		formats.html.enable = false
+		//add one more translation of de-DE
+		translation 'de-DE'
 	}
 }

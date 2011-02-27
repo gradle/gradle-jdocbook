@@ -37,7 +37,6 @@ class JDocBookConvention {
 			book.transformerParameters.putAll(commonBook.transformerParameters)
 			book.applyStandardInjectionValues = commonBook.applyStandardInjectionValues
 			book.injectionDateFormat = commonBook.injectionDateFormat
-			//formats.add
 			commonBook.formats.each {format ->
 				book.format(format)
 			}
