@@ -34,15 +34,6 @@ class RenderTask extends BookTask implements RenderingSource {
 	public void render() {
 		prepareForRendering()
 		log.lifecycle("rendering Book({}) {} / {}", book.name, lang, format.name);
-		book.environment.fontDirectories.each {
-			log.lifecycle it.path
-		}
-		for ( File f: book.environment.fontDirectories ) {
-			log.lifecycle("1." + f.path)
-			for ( File t: f.listFiles() ) {
-				log.lifecycle("2." + t.path)
-			}
-		}
 		book.componentRegistry.renderer.render(this, format)
 	}
 
