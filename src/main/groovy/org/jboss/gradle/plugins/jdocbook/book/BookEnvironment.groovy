@@ -33,11 +33,15 @@ class BookEnvironment implements Environment, MasterLanguageDescriptor {
 		this.project = project
 		this.masterLanguageDescriptor = this
 		this.resourceDelegate = new ResourceDelegate()
-		this.outputDirName = "${project.buildDirName}/docbook/${book.name}"
+		this.outputDirName = "${project.buildDirName}/docbook"
 		this.workDirName = outputDirName + "/work"
 		this.stageDirName = outputDirName + "/stage"
 		this.publishDirName = outputDirName + "/publish"
 		this.profileDirName = outputDirName + "/profile"
+		this.workDirName = "$outputDirName/work/${book.name}"
+		this.stageDirName = "$outputDirName/stage/${book.name}"
+		this.publishDirName = "$outputDirName/publish/${book.name}"
+		this.profileDirName = "$outputDirName/profile/${book.name}"
 	}
 
 	@Override
