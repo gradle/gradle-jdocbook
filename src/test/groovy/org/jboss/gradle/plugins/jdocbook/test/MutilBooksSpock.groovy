@@ -27,9 +27,10 @@ class MutilBooksSpock extends AbstractJDocbookSpock {
 			println " ---> task ($name) "
 		}
 		//tasks.getByName('renderDocBook_devguide_en-US_html').execute()
-		List list = new ArrayList()
-		list.add(tasks.buildDocs)
-		project.getGradle().getTaskGraph().execute(list)
+//		List list = new ArrayList()
+//		list.add(tasks.buildDocs)
+//		project.getGradle().getTaskGraph().execute(list)
+		tasks."renderDocBook_devguide_en-US_html".getOutputs().getHasOutput()
 
 	}
 

@@ -84,6 +84,9 @@ class RenderTask extends BookTask implements RenderingSource {
 		}
 	}
 	@OutputDirectory
+	File getPublishingBaseDirectory(){
+		resolvePublishingBaseDirectory()
+	}
 	File resolvePublishingBaseDirectory() {
 		book.environment.getPublishDirPerLang(lang)
 	}
