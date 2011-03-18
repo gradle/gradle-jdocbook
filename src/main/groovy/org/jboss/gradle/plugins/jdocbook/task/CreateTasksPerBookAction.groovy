@@ -15,7 +15,7 @@ import org.jboss.gradle.plugins.jdocbook.book.Book.FormatOption
  * @author: Strong Liu
  */
 class CreateTasksPerBookAction implements Action<Book> {
-	Logger log = Logging.getLogger(CreateTasksPerBookAction);
+	final static Logger log = Logging.getLogger(CreateTasksPerBookAction);
 	public static final String STAGE_TASK_GROUP = "stageStyles";
 	public static final String TRANSLATE_TASK_GROUP = "translateDocBook";
 	public static final String UPDATE_TRANSLATION_TASK_GROUP = "updateTranslations";

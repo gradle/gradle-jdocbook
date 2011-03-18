@@ -27,21 +27,21 @@ class RenderTask extends BookTask implements RenderingSource {
 		this.format = format
 	}
 
-	@Input public String getFormatName() {format.name}
+	@Input public String getFormatName() { format.name }
 
-	@Input @Optional public String getFormatFinalName() {format.finalName}
+	@Input @Optional public String getFormatFinalName() { format.finalName }
 
-	@Input @Optional public String getStylesheet() {return format.stylesheet}
+	@Input @Optional public String getStylesheet() { return format.stylesheet }
 
 
 	@TaskAction
 	public void render() {
 		prepareForRendering()
-		log.lifecycle("rendering Book({}) {} / {}", book.name, lang, format.name);
+		log.lifecycle("rendering Book({}) {}/{}", book.name, lang, format.name);
 		book.componentRegistry.renderer.render(this, format)
 	}
 
-	private boolean scriptClassLoaderExtended = false;
+	private static boolean scriptClassLoaderExtended = false;
 
 	private void prepareForRendering() {
 		if ( scriptClassLoaderExtended ) {

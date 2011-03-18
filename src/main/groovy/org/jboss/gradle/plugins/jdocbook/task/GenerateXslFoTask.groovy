@@ -46,7 +46,9 @@ public class GenerateXslFoTask extends BookTask implements RenderingSource {
 		throw new JDocBookProcessException("Could not locate PDF format options");
 		return format
 	}
-	File resolveSourceDocument(){getSourceDocument()}
+
+	File resolveSourceDocument(){ getSourceDocument() }
+
 	@InputFile
 	File getSourceDocument() {
 		if ( book.profiling.enabled ) {
