@@ -18,7 +18,7 @@ import org.gradle.api.tasks.OutputFile
  */
 //@SuppressWarnings({ "UnusedDeclaration" })
 public class ProfileTask extends BookTask implements ProfilingSource {
-	Logger log = Logging.getLogger(ProfileTask);
+	static final Logger log = Logging.getLogger(ProfileTask);
 
 	public Profiling getProfiling() {
 		return book.profiling
@@ -46,18 +46,19 @@ public class ProfileTask extends BookTask implements ProfilingSource {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	@InputFile
-	public File resolveDocumentFile() {
+	public File getDocumentFile() {
 		if ( lang== book.masterLanguage ) {
 			return book.environment.rootDocumentFile
 		}else{
 			new File(book.environment.getWorkDirPerLang(lang),book.masterSourceDocumentName)
 		}
 	}
+	public File resolveDocumentFile(){getDocumentFile()}
 	@OutputFile
-	public File resolveProfiledDocumentFile() {
+	public File getProfiledDocumentFile() {
 		return new File(getProfileOutputDirectory(), book.masterSourceDocumentName);
 	}
-
+	public File resolveProfiledDocumentFile(){getProfiledDocumentFile()}
 
 	@OutputDirectory
 	public File getProfileOutputDirectory() {

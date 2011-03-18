@@ -42,7 +42,7 @@ import org.jboss.gradle.plugins.jdocbook.JDocBookPlugin
  */
 @SuppressWarnings(["UnusedDeclaration"])
 public class StyleStagingTask extends BookTask {
-	Logger log = Logging.getLogger(StyleStagingTask);
+	final static Logger log = Logging.getLogger(StyleStagingTask);
 	@Input
 	@Optional
 	def jdocbookStyle = project.configurations."$JDocBookPlugin.STYLES_CONFIG_NAME"

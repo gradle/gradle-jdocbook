@@ -15,7 +15,7 @@ import org.jboss.gradle.plugins.jdocbook.book.Book
  */
 @SuppressWarnings([ "UnusedDeclaration" ])
 public class SynchronizePotTask extends BookTask {
-	Logger log = Logging.getLogger( TranslateTask );
+	final static Logger log = Logging.getLogger( SynchronizePotTask );
 
 	@OutputDirectory
 	public File getPotDirectory() {

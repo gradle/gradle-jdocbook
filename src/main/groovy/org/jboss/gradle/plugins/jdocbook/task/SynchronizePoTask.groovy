@@ -13,7 +13,7 @@ import org.gradle.api.tasks.TaskAction
  */
 @SuppressWarnings(["UnusedDeclaration"])
 public class SynchronizePoTask extends AbstractTranslationTask {
-	Logger log = Logging.getLogger(SynchronizePoTask);
+	final static Logger log = Logging.getLogger(SynchronizePoTask);
 
 	@InputDirectory
 	public File getTranslationPoDirectory() {

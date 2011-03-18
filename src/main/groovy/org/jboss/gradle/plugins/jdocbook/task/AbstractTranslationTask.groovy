@@ -14,15 +14,22 @@ import org.gradle.api.tasks.SkipWhenEmpty
  */
 public class AbstractTranslationTask extends BookTask implements TranslationSource {
 
-	@OutputDirectory
+
 	public File resolveTranslatedXmlDirectory() {
+		   getTranslatedXmlDir()
+	}
+	@OutputDirectory
+	public File getTranslatedXmlDir(){
 		book.environment.getWorkDirPerLang(lang)
 	}
-
 	@InputDirectory
 	@SkipWhenEmpty
-	public File resolvePoDirectory() {
+	public File getPoDirectory(){
 		book.environment.getSourceDirPerLang(lang)
+	}
+
+	public File resolvePoDirectory() {
+		getPoDirectory()
 	}
 
 }

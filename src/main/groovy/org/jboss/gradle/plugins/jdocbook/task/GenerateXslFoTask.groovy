@@ -11,6 +11,7 @@ import org.jboss.jdocbook.util.StandardDocBookFormatMetadata
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.SkipWhenEmpty
 import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.InputFile
 
 /**
  * TODO : javadoc
@@ -20,7 +21,7 @@ import org.gradle.api.tasks.OutputDirectory
  */
 @SuppressWarnings(["UnusedDeclaration"])
 public class GenerateXslFoTask extends BookTask implements RenderingSource {
-	Logger log = Logging.getLogger(GenerateXslFoTask);
+	static final Logger log = Logging.getLogger(GenerateXslFoTask);
 
 	@TaskAction
 	public void generate() {
@@ -45,8 +46,9 @@ public class GenerateXslFoTask extends BookTask implements RenderingSource {
 		throw new JDocBookProcessException("Could not locate PDF format options");
 		return format
 	}
-
-	File resolveSourceDocument() {
+	File resolveSourceDocument(){getSourceDocument()}
+	@InputFile
+	File getSourceDocument() {
 		if ( book.profiling.enabled ) {
 			return new File(book.environment.getProfileDirPerLang(lang), book.masterSourceDocumentName)
 		}

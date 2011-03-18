@@ -19,7 +19,7 @@ import org.gradle.api.tasks.OutputDirectory
  * @author Strong Liu
  */
 class RenderTask extends BookTask implements RenderingSource {
-	Logger log = Logging.getLogger(RenderTask);
+	static final Logger log = Logging.getLogger(RenderTask);
 	def format;
 
 	public void configure(Book book, def language, def format) {
@@ -72,7 +72,7 @@ class RenderTask extends BookTask implements RenderingSource {
 	}
 
 	@InputFile
-	public File resolveSourceDocument() {
+	public File getSourceDocument(){
 		if ( book.profiling.enabled ) {
 			return new File(book.environment.getProfileDirPerLang(lang), book.masterSourceDocumentName)
 		}
@@ -82,6 +82,9 @@ class RenderTask extends BookTask implements RenderingSource {
 		else {
 			return new File(book.environment.getWorkDirPerLang(lang), book.masterSourceDocumentName)
 		}
+	}
+	public File resolveSourceDocument() {
+		getSourceDocument()
 	}
 	@OutputDirectory
 	File getPublishingBaseDirectory(){
