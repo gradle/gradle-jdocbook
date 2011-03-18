@@ -18,7 +18,7 @@ import org.jboss.jdocbook.render.FormatOptions
  * @author Strong Liu
  */
 class Book {
-	Logger log = Logging.getLogger(Book);
+	final static Logger log = Logging.getLogger(Book);
 	def masterSourceDocumentName = "book.xml"
 	/**
 	 * default language of the book is en-US, if the book is not language aware, then this should be
