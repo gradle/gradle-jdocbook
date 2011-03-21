@@ -20,7 +20,9 @@ public class TranslateTask extends AbstractTranslationTask {
 
 	@TaskAction
 	public void translate() {
+        long start=System.currentTimeMillis();
 		log.lifecycle( "translating {} into {}", getLang(), resolveTranslatedXmlDirectory() );
 		getBook().getComponentRegistry().getTranslator().translate( this );
+        log.lifecycle("finish translating {} into {}, it took {}s", getLang(), resolveTranslatedXmlDirectory(),(System.currentTimeMillis()-start));
 	}
 }

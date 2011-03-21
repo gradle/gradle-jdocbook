@@ -113,12 +113,16 @@ class CreateTasksPerBookAction implements Action<Book> {
 			if ( lang != book.masterLanguage && translateTask != null ) {
 				render.dependsOn translateTask
 			}
-			if ( format.name == StandardDocBookFormatMetadata.PDF.name ) {
-				GenerateXslFoTask xslFoTask = addTask(String.format("%s_%s",getTaskName(CreateTasksPerBookAction.XSL_FO_TASK_GROUP, book.name), lang), GenerateXslFoTask)
-				xslFoTask.description = String.format("Generating %s XSL FO files for language %s", getDescriptionName(book.name), lang)
-				xslFoTask.configure(book, lang)
-				render.dependsOn xslFoTask
-			}
+            if (format.name == StandardDocBookFormatMetadata.PDF.name) {
+                String xslFoTaskName = getTaskName(CreateTasksPerBookAction.XSL_FO_TASK_GROUP, book.name)
+                Task xslFoTask = getTask(xslFoTaskName)
+                if (xslFoTask == null) {
+                    xslFoTask = addTask(xslFoTaskName, GenerateXslFoTask)
+                    xslFoTask.description = String.format("Generating %s XSL FO files", getDescriptionName(book.name))
+                    xslFoTask.configure(book, lang)
+                }
+                render.dependsOn xslFoTask
+            }
 			getTask(getTaskName(CreateTasksPerBookAction.RENDER_TASK_GROUP, book.name)).dependsOn render
 		}
 

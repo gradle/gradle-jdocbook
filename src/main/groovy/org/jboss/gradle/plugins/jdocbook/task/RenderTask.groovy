@@ -36,9 +36,11 @@ class RenderTask extends BookTask implements RenderingSource {
 
 	@TaskAction
 	public void render() {
+        long start = System.currentTimeMillis();
 		prepareForRendering()
 		log.lifecycle("rendering Book({}) {}/{}", book.name, lang, format.name);
 		book.componentRegistry.renderer.render(this, format)
+        log.lifecycle("finish doing render Book({}) {}/{}, it took {}s", book.name, lang, format.name,(System.currentTimeMillis()-start));
 	}
 
 	private static boolean scriptClassLoaderExtended = false;

@@ -1,6 +1,6 @@
 package org.jboss.gradle.plugins.jdocbook.task
 
-import org.gradle.api.DefaultTask
+
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.tasks.TaskAction
@@ -8,8 +8,6 @@ import org.jboss.jdocbook.JDocBookProcessException
 import org.jboss.jdocbook.render.FormatOptions
 import org.jboss.jdocbook.render.RenderingSource
 import org.jboss.jdocbook.util.StandardDocBookFormatMetadata
-import org.gradle.api.tasks.InputDirectory
-import org.gradle.api.tasks.SkipWhenEmpty
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.InputFile
 
