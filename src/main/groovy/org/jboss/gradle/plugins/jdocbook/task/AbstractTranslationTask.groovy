@@ -1,11 +1,36 @@
+/*
+ * jDocBook, processing of DocBook sources
+ *
+ * Copyright (c) 2011, Red Hat Inc. or third-party contributors as
+ * indicated by the @author tags or express copyright attribution
+ * statements applied by the authors.  All third-party contributions are
+ * distributed under license by Red Hat Inc.
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ * Boston, MA  02110-1301  USA
+ */
+
+
+
 package org.jboss.gradle.plugins.jdocbook.task;
 
 
 import org.gradle.api.tasks.InputDirectory
-import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
-import org.jboss.jdocbook.translate.TranslationSource
 import org.gradle.api.tasks.SkipWhenEmpty
+import org.jboss.jdocbook.translate.TranslationSource
 
 /**
  * Helper for translation-based tasks
@@ -15,21 +40,23 @@ import org.gradle.api.tasks.SkipWhenEmpty
 public class AbstractTranslationTask extends BookTask implements TranslationSource {
 
 
-	public File resolveTranslatedXmlDirectory() {
-		   getTranslatedXmlDir()
-	}
-	@OutputDirectory
-	public File getTranslatedXmlDir(){
-		book.environment.getWorkDirPerLang(lang)
-	}
-	@InputDirectory
-	@SkipWhenEmpty
-	public File getPoDirectory(){
-		book.environment.getSourceDirPerLang(lang)
-	}
+    public File resolveTranslatedXmlDirectory() {
+        getTranslatedXmlDir()
+    }
 
-	public File resolvePoDirectory() {
-		getPoDirectory()
-	}
+    @OutputDirectory
+    public File getTranslatedXmlDir() {
+        book.environment.getWorkDirPerLang(lang)
+    }
+
+    @InputDirectory
+    @SkipWhenEmpty
+    public File getPoDirectory() {
+        book.environment.getSourceDirPerLang(lang)
+    }
+
+    public File resolvePoDirectory() {
+        getPoDirectory()
+    }
 
 }

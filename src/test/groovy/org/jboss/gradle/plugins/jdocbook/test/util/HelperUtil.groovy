@@ -1,18 +1,28 @@
 /*
- * Copyright 2010 the original author or authors.
+ * jDocBook, processing of DocBook sources
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Copyright (c) 2011, Red Hat Inc. or third-party contributors as
+ * indicated by the @author tags or express copyright attribution
+ * statements applied by the authors.  All third-party contributions are
+ * distributed under license by Red Hat Inc.
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ * Boston, MA  02110-1301  USA
  */
+
+
 
 package org.jboss.gradle.plugins.jdocbook.test.util
 
@@ -54,14 +64,14 @@ import org.gradle.testfixtures.ProjectBuilder
 class HelperUtil {
 
     public static final Closure TEST_CLOSURE = {}
-    public static final Spec TEST_SEPC  = new AndSpec()
+    public static final Spec TEST_SEPC = new AndSpec()
     private static final ClassGenerator CLASS_GENERATOR = new AsmBackedClassGenerator()
     private static final ITaskFactory TASK_FACTORY = new AnnotationProcessingTaskFactory(new TaskFactory(CLASS_GENERATOR))
 
     static <T extends Task> T createTask(Class<T> type) {
         return createTask(type, createRootProject())
     }
-    
+
     static <T extends Task> T createTask(Class<T> type, ProjectInternal project) {
         return createTask(type, project, 'name')
     }
@@ -122,11 +132,11 @@ class HelperUtil {
     }
 
     static ModuleDependency createDependency(String group, String name, String version) {
-      new DefaultExternalModuleDependency(group, name, version)
+        new DefaultExternalModuleDependency(group, name, version)
     }
 
     static DefaultPublishArtifact createPublishArtifact(String name, String extension, String type, String classifier) {
-      new DefaultPublishArtifact(name, extension, type, classifier, new Date(), new File(""))
+        new DefaultPublishArtifact(name, extension, type, classifier, new Date(), new File(""))
     }
 
     static groovy.lang.Script createScript(String code) {
@@ -136,7 +146,7 @@ class HelperUtil {
     static Object call(String text, Object params) {
         toClosure(text).call(params)
     }
-    
+
     static Closure toClosure(String text) {
         return new GroovyShell().evaluate("return " + text)
     }
@@ -175,7 +185,9 @@ class HelperUtil {
 }
 
 public interface TestClosure {
-    Object call(Object param);
+    Object call(Object param)
+
+    ;
 }
 
 public abstract class TestScript extends DefaultScript {

@@ -1,3 +1,29 @@
+/*
+ * jDocBook, processing of DocBook sources
+ *
+ * Copyright (c) 2011, Red Hat Inc. or third-party contributors as
+ * indicated by the @author tags or express copyright attribution
+ * statements applied by the authors.  All third-party contributions are
+ * distributed under license by Red Hat Inc.
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ * Boston, MA  02110-1301  USA
+ */
+
+
+
 package org.jboss.gradle.plugins.jdocbook.book
 
 import org.gradle.api.Project
@@ -17,45 +43,49 @@ import org.jboss.jdocbook.util.XIncludeHelper
  * @author: Strong Liu
  */
 class BookEnvironment implements Environment, MasterLanguageDescriptor {
-	Logger log = Logging.getLogger(Environment);
-	Book book;
-	MasterLanguageDescriptor masterLanguageDescriptor;
-	Project project
-	ResourceDelegate resourceDelegate
-	def outputDirName
-	def workDirName
-	def stageDirName
-	def publishDirName
-	def profileDirName
+    private static final Logger log = Logging.getLogger(Environment);
+    Book book;
+    MasterLanguageDescriptor masterLanguageDescriptor;
+    Project project
+    ResourceDelegate resourceDelegate
+    def outputDirName
+    def workDirName
+    def stageDirName
+    def publishDirName
+    def profileDirName
 
-	BookEnvironment(Book book, Project project) {
-		this.book = book
-		this.project = project
-		this.masterLanguageDescriptor = this
-		this.resourceDelegate = new ResourceDelegate()
-		this.outputDirName = "${project.buildDirName}/docbook"
-		this.workDirName = outputDirName + "/work"
-		this.stageDirName = outputDirName + "/stage"
-		this.publishDirName = outputDirName + "/publish"
-		this.profileDirName = outputDirName + "/profile"
-		this.workDirName = "$outputDirName/work/${book.name}"
-		this.stageDirName = "$outputDirName/stage/${book.name}"
-		this.publishDirName = "$outputDirName/publish/${book.name}"
-		this.profileDirName = "$outputDirName/profile/${book.name}"
-	}
+    BookEnvironment(Book book, Project project) {
+        this.book = book
+        this.project = project
+        this.masterLanguageDescriptor = this
+        this.resourceDelegate = new ResourceDelegate()
+        this.outputDirName = "${project.buildDirName}/docbook"
+        this.workDirName = outputDirName + "/work"
+        this.stageDirName = outputDirName + "/stage"
+        this.publishDirName = outputDirName + "/publish"
+        this.profileDirName = outputDirName + "/profile"
+        this.workDirName = "$outputDirName/work/${book.name}"
+        this.stageDirName = "$outputDirName/stage/${book.name}"
+        this.publishDirName = "$outputDirName/publish/${book.name}"
+        this.profileDirName = "$outputDirName/profile/${book.name}"
+    }
 
-	@Override
-	Locale getLanguage() {
-		TranslationUtils.parse(book.masterLanguage, book.localeSeparator)
-	}
+    private Locale language
 
-	Locale getLanguage(lang) {
-		TranslationUtils.parse(lang, book.localeSeparator)
-	}
+    @Override
+    Locale getLanguage() {
+        if (language == null)
+            language = getLanguage(book.masterLanguage)
+        return language
+    }
 
-	public ResourceDelegate getResourceDelegate() {
-		return resourceDelegate
-	}
+    Locale getLanguage(lang) {
+        TranslationUtils.parse(lang, book.localeSeparator)
+    }
+
+    public ResourceDelegate getResourceDelegate() {
+        return resourceDelegate
+    }
 
     private Set<File> documentFiles;
 
@@ -70,113 +100,122 @@ class BookEnvironment implements Environment, MasterLanguageDescriptor {
 
     }
 
-	@Override
-	Environment.DocBookXsltResolutionStrategy getDocBookXsltResolutionStrategy() {
-		return Environment.DocBookXsltResolutionStrategy.INCLUSIVE
-	}
+    @Override
+    Environment.DocBookXsltResolutionStrategy getDocBookXsltResolutionStrategy() {
+        return Environment.DocBookXsltResolutionStrategy.INCLUSIVE
+    }
 
-	private ClassLoader buildResourceDelegateClassLoader() {
-		List<URL> urls = new ArrayList<URL>();
+    private ClassLoader buildResourceDelegateClassLoader() {
+        List<URL> urls = new ArrayList<URL>();
 
-		if ( stagingDirectory.exists() ) {
-			try {
-				urls.add(stagingDirectory.toURI().toURL());
-			}
-			catch (MalformedURLException e) {
-				throw new JDocBookProcessException("Unable to resolve staging directory to URL", e);
-			}
-		}
-		def feedingClasspathWithDependencies = { configuration ->
-			configuration.files.each { File file ->
-				try {
-					urls.add(file.toURI().toURL());
-				}
-				catch (MalformedURLException e) {
-					log.warn("Unable to retrieve file url [" + file.getAbsolutePath() + "]; ignoring");
-				}
-			}
-		}
-		feedingClasspathWithDependencies(project.configurations."${JDocBookPlugin.DOCBOOK_CONFIG_NAME}")
-		feedingClasspathWithDependencies(project.buildscript.configurations."${ScriptHandler.CLASSPATH_CONFIGURATION}")
-		feedingClasspathWithDependencies(project.configurations."${JDocBookPlugin.STYLES_CONFIG_NAME}")
-		return new URLClassLoader(
-				urls.toArray(new URL[urls.size()]),
-				Thread.currentThread().getContextClassLoader()
-		);
-	}
+        if (stagingDirectory.exists()) {
+            try {
+                urls.add(stagingDirectory.toURI().toURL());
+            }
+            catch (MalformedURLException e) {
+                throw new JDocBookProcessException("Unable to resolve staging directory to URL", e);
+            }
+        }
+        def feedingClasspathWithDependencies = { configuration ->
+            configuration.files.each { File file ->
+                try {
+                    urls.add(file.toURI().toURL());
+                }
+                catch (MalformedURLException e) {
+                    log.warn("Unable to retrieve file url [" + file.getAbsolutePath() + "]; ignoring");
+                }
+            }
+        }
+        feedingClasspathWithDependencies(project.configurations."${JDocBookPlugin.DOCBOOK_CONFIG_NAME}")
+        feedingClasspathWithDependencies(project.buildscript.configurations."${ScriptHandler.CLASSPATH_CONFIGURATION}")
+        feedingClasspathWithDependencies(project.configurations."${JDocBookPlugin.STYLES_CONFIG_NAME}")
+        return new URLClassLoader(
+                urls.toArray(new URL[urls.size()]),
+                Thread.currentThread().getContextClassLoader()
+        );
+    }
 
-	File getWorkDirectory() {
-		project.file(workDirName)
-	}
+    File getWorkDirectory() {
+        project.file(workDirName)
+    }
 
-	File getWorkDirPerLang(lang) {
-		new File(workDirectory, lang)
-	}
+    File getWorkDirPerLang(lang) {
+        new File(workDirectory, lang)
+    }
 
-	File getProfileDirPerLang(lang) {
-		new File(profileDirName, lang)
-	}
+    File getProfileDirPerLang(lang) {
+        new File(profileDirName, lang)
+    }
 
-	File getPublishDirPerLang(lang) {
-		project.file("$publishDirName/$lang")
-	}
+    File getPublishDirPerLang(lang) {
+        project.file("$publishDirName/$lang")
+    }
 
-	File getStagingDirectory() {
-		project.file(stageDirName)
-	}
+    File getStagingDirectory() {
+        project.file(stageDirName)
+    }
 
-	List<File> getFontDirectories() {
-		def list = []
-		if ( book.fontsDirName == null ) {
-			book.fontsDirName = "${book.baseDirName}/${book.masterLanguage}/fonts"
-		}
-		def font = project.file(book.fontsDirName)
-		if ( font.exists() && font.isDirectory() ) {
-			list << project.file(book.fontsDirName)
-		}
-		list << new File(stagingDirectory, "fonts")
-		return list
-	}
+    private List<File> fontDirectories
 
-	File getPotDirectory() {
-		project.file(book.potDirName)
-	}
+    List<File> getFontDirectories() {
+        if (fontDirectories == null) {
+            fontDirectories = []
+            if (book.fontsDirName == null) {
+                book.fontsDirName = "${book.baseDirName}/${book.masterLanguage}/fonts"
+            }
+            def font = project.file(book.fontsDirName)
+            if (font.exists() && font.isDirectory()) {
+                fontDirectories << project.file(book.fontsDirName)
+            }
+            fontDirectories << new File(stagingDirectory, "fonts")
+        }
+        return fontDirectories
+    }
 
-	File getImagesDirectory() {
-		if ( book.imagesDirName == null ) {
-			book.imagesDirName = "${book.baseDirName}/${book.masterLanguage}/images"
-		}
-		project.file(book.imagesDirName)
-	}
+    File getPotDirectory() {
+        project.file(book.potDirName)
+    }
 
-	File getCssDirectory() {
-		if ( book.cssDirName == null ) {
-			book.cssDirName = "${book.baseDirName}/${book.masterLanguage}/css"
-		}
-		project.file(book.cssDirName)
-	}
+    File getImagesDirectory() {
+        if (book.imagesDirName == null) {
+            book.imagesDirName = "${book.baseDirName}/${book.masterLanguage}/images"
+        }
+        project.file(book.imagesDirName)
+    }
 
-	File getSourceDirPerLang(lang) {
-		project.file("${book.baseDirName}/$lang")
-	}
+    File getCssDirectory() {
+        if (book.cssDirName == null) {
+            book.cssDirName = "${book.baseDirName}/${book.masterLanguage}/css"
+        }
+        project.file(book.cssDirName)
+    }
 
-	File getBaseSourceDirectory() {
-		getSourceDirPerLang(book.masterLanguage)
-	}
+    File getSourceDirPerLang(lang) {
+        project.file("${book.baseDirName}/$lang")
+    }
 
-	File getRootDocumentFile() {
-		new File(getBaseSourceDirectory(), book.masterSourceDocumentName)
-	}
+    File getBaseSourceDirectory() {
+        getSourceDirPerLang(book.masterLanguage)
+    }
 
-	class ResourceDelegate extends ResourceDelegateSupport {
-		private ClassLoader loader;
+    private File rootDocumentFile
 
-		@Override
-		protected ClassLoader getResourceClassLoader() {
-			if ( loader == null ) {
-				loader = buildResourceDelegateClassLoader();
-			}
-			return loader;
-		}
-	}
+    File getRootDocumentFile() {
+        if (rootDocumentFile == null) {
+            rootDocumentFile = new File(getBaseSourceDirectory(), book.masterSourceDocumentName)
+        }
+        return rootDocumentFile
+    }
+
+    class ResourceDelegate extends ResourceDelegateSupport {
+        private ClassLoader loader;
+
+        @Override
+        protected ClassLoader getResourceClassLoader() {
+            if (loader == null) {
+                loader = buildResourceDelegateClassLoader();
+            }
+            return loader;
+        }
+    }
 }

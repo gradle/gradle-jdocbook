@@ -1,17 +1,41 @@
 buildscript {
-  repositories {
-      mavenCentral()
-      mavenRepo name: "jboss", urls: "http://repository.jboss.org/nexus/content/groups/public/"
-      mavenRepo urls: "file://" + System.getProperty('user.home') + "/.m2/repository/"
-  }
-  dependencies {
-      classpath 'org.jboss.jdocbook:gradle-jdocbook:1.1.0-SNAPSHOT'
-  }
+    repositories {
+        mavenCentral()
+        mavenRepo name: "jboss", urls: "http://repository.jboss.org/nexus/content/groups/public/"
+        mavenRepo urls: "file://" + System.getProperty('user.home') + "/.m2/repository/"
+    }
+    dependencies {
+        classpath 'org.jboss.jdocbook:gradle-jdocbook:1.1.0-SNAPSHOT'
+    }
 }
+/*
+ * jDocBook, processing of DocBook sources
+ *
+ * Copyright (c) 2011, Red Hat Inc. or third-party contributors as
+ * indicated by the @author tags or express copyright attribution
+ * statements applied by the authors.  All third-party contributions are
+ * distributed under license by Red Hat Inc.
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ * Boston, MA  02110-1301  USA
+ */
+
 // the stylesheets used in the format are came from hibernate-jdocbook-style
 // but they're optional, you can use others or the default come from docbook-xsl
 dependencies {
-	jdocbookStyles "org.hibernate:hibernate-jdocbook-style:2.0.1"
+    jdocbookStyles "org.hibernate:hibernate-jdocbook-style:2.0.1"
 }
 repositories {
     mavenCentral()
@@ -26,21 +50,21 @@ repositories {
  * the project structure is supposed to be src/main/docbook/en-US/[images|fonts|css]
  */
 jdocbook {
-	masterSourceDocumentName = 'HIBERNATE_-_Relational_Persistence_for_Idiomatic_Java.xml'
-	translations = ['zh-CN']  //or translate 'zh-CN'
-	format {
-		name = 'html_single'
-		finalName = 'index.html'
-		stylesheet = "classpath:/xslt/org/hibernate/jdocbook/xslt/xhtml-single.xsl"
-	}
-	format {
-		name = 'html'
-		finalName = 'index.html'
-		stylesheet = "classpath:/xslt/org/hibernate/jdocbook/xslt/xhtml.xsl"
-	}
-	format {
-		name = 'pdf'
-		finalName = "hibernate_reference.pdf"
-		stylesheet = "classpath:/xslt/org/hibernate/jdocbook/xslt/pdf.xsl"
-	}
+    masterSourceDocumentName = 'HIBERNATE_-_Relational_Persistence_for_Idiomatic_Java.xml'
+    translations = ['zh-CN']  //or translate 'zh-CN'
+    format {
+        name = 'html_single'
+        finalName = 'index.html'
+        stylesheet = "classpath:/xslt/org/hibernate/jdocbook/xslt/xhtml-single.xsl"
+    }
+    format {
+        name = 'html'
+        finalName = 'index.html'
+        stylesheet = "classpath:/xslt/org/hibernate/jdocbook/xslt/xhtml.xsl"
+    }
+    format {
+        name = 'pdf'
+        finalName = "hibernate_reference.pdf"
+        stylesheet = "classpath:/xslt/org/hibernate/jdocbook/xslt/pdf.xsl"
+    }
 }

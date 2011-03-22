@@ -1,4 +1,28 @@
 <?xml version='1.0' encoding='UTF-8' ?>
+<!--
+  ~ jDocBook, processing of DocBook sources
+  ~
+  ~ Copyright (c) 2011, Red Hat Inc. or third-party contributors as
+  ~ indicated by the @author tags or express copyright attribution
+  ~ statements applied by the authors.  All third-party contributions are
+  ~ distributed under license by Red Hat Inc.
+  ~
+  ~ This copyrighted material is made available to anyone wishing to use, modify,
+  ~ copy, or redistribute it subject to the terms and conditions of the GNU
+  ~ Lesser General Public License, as published by the Free Software Foundation.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  ~ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+  ~ for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public License
+  ~ along with this distribution; if not, write to:
+  ~ Free Software Foundation, Inc.
+  ~ 51 Franklin Street, Fifth Floor
+  ~ Boston, MA  02110-1301  USA
+  -->
+
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 
 
@@ -74,20 +98,23 @@
                 <title>Maven Repository Wiki Pages</title>
                 <listitem>
                     <para>
-                        <ulink url="http://community.jboss.org/docs/DOC-14900"/> -
+                        <ulink url="http://community.jboss.org/docs/DOC-14900"/>
+                        -
                         General information about the repository.
                     </para>
                 </listitem>
                 <listitem>
                     <para>
-                        <ulink url="http://community.jboss.org/docs/DOC-15170"/> -
+                        <ulink url="http://community.jboss.org/docs/DOC-15170"/>
+                        -
                         Information about setting up the JBoss repositories in
                         order to do development work on JBoss projects themselves.
                     </para>
                 </listitem>
                 <listitem>
                     <para>
-                        <ulink url="http://community.jboss.org/docs/DOC-15169"/> -
+                        <ulink url="http://community.jboss.org/docs/DOC-15169"/>
+                        -
                         Information about setting up access to the repository to
                         use JBoss projects as part of your own software.
                     </para>
@@ -99,7 +126,8 @@
             Hibernate produces a number of artifacts (all under the org.hibernate groupId):
         </para>
         <variablelist>
-            <title>Hibernate Artifacts under groupId <systemitem>org.hibernate</systemitem>
+            <title>Hibernate Artifacts under groupId
+                <systemitem>org.hibernate</systemitem>
             </title>
             <varlistentry>
                 <term>hibernate-core</term>
@@ -118,11 +146,12 @@
                 <term>hibernate-entitymanager</term>
                 <listitem>
                     <para>
-                        Represents Hibernate's implementation of <phrase>JPA</phrase>, as specified at
+                        Represents Hibernate's implementation of<phrase>JPA</phrase>, as specified at
                         <ulink url="http://jcp.org/en/jsr/detail?id=317"/>.
                     </para>
                     <para>
-                        This artifact depends on <systemitem>hibernate-core</systemitem>
+                        This artifact depends on
+                        <systemitem>hibernate-core</systemitem>
                     </para>
                 </listitem>
             </varlistentry>
@@ -134,8 +163,9 @@
                         to your entities.
                     </para>
                     <para>
-                        This artifact depends on both <systemitem>hibernate-core</systemitem>
-                        and <systemitem>hibernate-entitymanager</systemitem>.
+                        This artifact depends on both
+                        <systemitem>hibernate-core</systemitem>
+                        and<systemitem>hibernate-entitymanager</systemitem>.
                     </para>
                 </listitem>
             </varlistentry>
@@ -143,13 +173,18 @@
                 <term>hibernate-c3p0</term>
                 <listitem>
                     <para>
-                        Provides integration between Hibernate and the <application>C3P0</application> connection
-                        pool library.  See <ulink url="http://sourceforge.net/projects/c3p0/"/> for information
-                        about <application>C3P0</application>.
+                        Provides integration between Hibernate and the
+                        <application>C3P0</application>
+                        connection
+                        pool library. See
+                        <ulink url="http://sourceforge.net/projects/c3p0/"/>
+                        for information
+                        about<application>C3P0</application>.
                     </para>
                     <para>
-                        This artifact depends on <systemitem>hibernate-core</systemitem>, but is generally included
-                        in a project as a runtime dependency.  It pulls in the <application>C3P0</application>
+                        This artifact depends on<systemitem>hibernate-core</systemitem>, but is generally included
+                        in a project as a runtime dependency. It pulls in the
+                        <application>C3P0</application>
                         dependencies automatically.
                     </para>
                 </listitem>
@@ -158,13 +193,18 @@
                 <term>hibernate-proxool</term>
                 <listitem>
                     <para>
-                        Provides integration between Hibernate and the <application>Proxool</application> connection
-                        pool library. See <ulink url="http://proxool.sourceforge.net/"/> for more information about
+                        Provides integration between Hibernate and the
+                        <application>Proxool</application>
+                        connection
+                        pool library. See
+                        <ulink url="http://proxool.sourceforge.net/"/>
+                        for more information about
                         this library.
                     </para>
                     <para>
-                        This artifact depends on <systemitem>hibernate-core</systemitem>, but is generally included
-                        in a project as a runtime dependency. It pulls in the <application>Proxool</application>
+                        This artifact depends on<systemitem>hibernate-core</systemitem>, but is generally included
+                        in a project as a runtime dependency. It pulls in the
+                        <application>Proxool</application>
                         dependencies automatically..
                     </para>
                 </listitem>
@@ -173,13 +213,16 @@
                 <term>hibernate-ehcache</term>
                 <listitem>
                     <para>
-                        Privides integration between Hibernate and <application>EhCache</application>, as a
-                        second-level cache. See <ulink url="http://ehcache.sourceforge.net/"/> for more
+                        Privides integration between Hibernate and<application>EhCache</application>, as a
+                        second-level cache. See
+                        <ulink url="http://ehcache.sourceforge.net/"/>
+                        for more
                         information about<application>EhCache</application>.
                     </para>
                     <para>
-                        This artifact depends on <systemitem>hibernate-core</systemitem>, but is generally included
-                        in a project as a runtime dependency. It pulls in the <application>Ehcache</application>
+                        This artifact depends on<systemitem>hibernate-core</systemitem>, but is generally included
+                        in a project as a runtime dependency. It pulls in the
+                        <application>Ehcache</application>
                         dependencies automatically.
                     </para>
                 </listitem>
@@ -188,13 +231,16 @@
                 <term>hibernate-infinispan</term>
                 <listitem>
                     <para>
-                        Provides integration between Hibernate and <application>Infinispan</application>, as a
-                        second-level cache. See <ulink url="http://jboss.org/infinispan"/> for more information
-                        about <application>Infinispan</application>.
+                        Provides integration between Hibernate and<application>Infinispan</application>, as a
+                        second-level cache. See
+                        <ulink url="http://jboss.org/infinispan"/>
+                        for more information
+                        about<application>Infinispan</application>.
                     </para>
                     <para>
-                        This artifact depends on <systemitem>hibernate-core</systemitem>, but is generally included
-                        in a project as a runtime dependency. It pulls in the <application>Infinispan</application>
+                        This artifact depends on<systemitem>hibernate-core</systemitem>, but is generally included
+                        in a project as a runtime dependency. It pulls in the
+                        <application>Infinispan</application>
                         dependencies automatically.
                     </para>
                 </listitem>
@@ -203,13 +249,16 @@
                 <term>hibernate-jbosscache</term>
                 <listitem>
                     <para>
-                        Provides integration between Hibernate and <application>JBossCache</application>, as a
-                        second-level cache. See <ulink url="http://jboss.org/jbosscache"/> for information about
+                        Provides integration between Hibernate and<application>JBossCache</application>, as a
+                        second-level cache. See
+                        <ulink url="http://jboss.org/jbosscache"/>
+                        for information about
                         <application>JBossCache</application>.
                     </para>
                     <para>
-                        This artifact depends on <systemitem>hibernate-core</systemitem>, but is generally included
-                        in a project as a runtime dependency.  It pulls in the <application>JBossCache</application>
+                        This artifact depends on<systemitem>hibernate-core</systemitem>, but is generally included
+                        in a project as a runtime dependency. It pulls in the
+                        <application>JBossCache</application>
                         dependencies automatically.
                     </para>
                 </listitem>
@@ -218,13 +267,18 @@
                 <term>hibernate-oscache</term>
                 <listitem>
                     <para>
-                        Provides integration between Hibernate and <application>OSCache</application> as a
-                        second-level cache. See <ulink url="http://www.opensymphony.com/oscache/"/> for information
-                        about <application>OSCache</application>.
+                        Provides integration between Hibernate and
+                        <application>OSCache</application>
+                        as a
+                        second-level cache. See
+                        <ulink url="http://www.opensymphony.com/oscache/"/>
+                        for information
+                        about<application>OSCache</application>.
                     </para>
                     <para>
-                        This artifact depends on <systemitem>hibernate-core</systemitem>, but is generally included
-                        in a project as a runtime dependency.  It pulls in the <application>OSCache</application>
+                        This artifact depends on<systemitem>hibernate-core</systemitem>, but is generally included
+                        in a project as a runtime dependency. It pulls in the
+                        <application>OSCache</application>
                         dependencies automatically.
                     </para>
                 </listitem>
@@ -233,13 +287,16 @@
                 <term>hibernate-swarmcache</term>
                 <listitem>
                     <para>
-                        Provides integration between Hibernate and <application>SwarmCache</application>, as a
-                        second-level cache. See <ulink url="http://swarmcache.sourceforge.net/"/> for more information
-                        about <application>SwarmCache</application>.
+                        Provides integration between Hibernate and<application>SwarmCache</application>, as a
+                        second-level cache. See
+                        <ulink url="http://swarmcache.sourceforge.net/"/>
+                        for more information
+                        about<application>SwarmCache</application>.
                     </para>
                     <para>
-                        This artifact depends on <systemitem>hibernate-core</systemitem>, but is generally included
-                        in a project as a runtime dependency. It pulls in the <application>SwarmCache</application>
+                        This artifact depends on<systemitem>hibernate-core</systemitem>, but is generally included
+                        in a project as a runtime dependency. It pulls in the
+                        <application>SwarmCache</application>
                         dependencies automatically.
                     </para>
                 </listitem>

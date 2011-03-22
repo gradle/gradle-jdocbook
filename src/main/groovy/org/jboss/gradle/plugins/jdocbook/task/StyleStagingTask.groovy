@@ -1,7 +1,7 @@
 /*
  * jDocBook, processing of DocBook sources
  *
- * Copyright (c) 2010, Red Hat Inc. or third-party contributors as
+ * Copyright (c) 2011, Red Hat Inc. or third-party contributors as
  * indicated by the @author tags or express copyright attribution
  * statements applied by the authors.  All third-party contributions are
  * distributed under license by Red Hat Inc.
@@ -21,6 +21,8 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
+
+
 package org.jboss.gradle.plugins.jdocbook.task;
 
 
@@ -28,12 +30,8 @@ import org.gradle.api.artifacts.Configuration.State
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.specs.Spec
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputDirectory
-import org.gradle.api.tasks.Optional
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.TaskAction
 import org.jboss.gradle.plugins.jdocbook.JDocBookPlugin
+import org.gradle.api.tasks.*
 
 /**
  * Applies staging of style artifacts
@@ -42,75 +40,75 @@ import org.jboss.gradle.plugins.jdocbook.JDocBookPlugin
  */
 @SuppressWarnings(["UnusedDeclaration"])
 public class StyleStagingTask extends BookTask {
-	final static Logger log = Logging.getLogger(StyleStagingTask);
-	@Input
-	@Optional
-	def jdocbookStyle = project.configurations."$JDocBookPlugin.STYLES_CONFIG_NAME"
+    final static Logger log = Logging.getLogger(StyleStagingTask);
+    @Input
+    @Optional
+    def jdocbookStyle = project.configurations."$JDocBookPlugin.STYLES_CONFIG_NAME"
 
-	//FIXME skip this action if no jdocbook style defined
+    //FIXME skip this action if no jdocbook style defined
 
-	@TaskAction
-	public void stageJDocbookStyles() {
-		log.lifecycle("Staging styles to {}", getStagingDirectory());
-		if ( jdocbookStyle.state != State.RESOLVED ) {
-			jdocbookStyle.resolve();
-		}
-		jdocbookStyle.filter(jdocbookStyleSpec).each {File file ->
-			project.copy {
-				into(getStagingDirectory())
-				from(project.zipTree(file).matching { exclude "META-INF/**" })
-			}
-		}
-	}
+    @TaskAction
+    public void stageJDocbookStyles() {
+        log.lifecycle("Staging styles to {}", getStagingDirectory());
+        if (jdocbookStyle.state != State.RESOLVED) {
+            jdocbookStyle.resolve();
+        }
+        jdocbookStyle.filter(jdocbookStyleSpec).each {File file ->
+            project.copy {
+                into(getStagingDirectory())
+                from(project.zipTree(file).matching { exclude "META-INF/**" })
+            }
+        }
+    }
 
-	@TaskAction
-	public void stageBookImages() {
-		def image = getBookImages()
-		if ( image != null && image.exists() && image.list() ) {
-			log.lifecycle("Staging project images to {}", getStagingDirectory());
-			project.copy {
-				into project.file(book.environment.stageDirName + '/images' + '/' + getBookImages().name)
-				from getBookImages()
-			}
-		}
-	}
+    @TaskAction
+    public void stageBookImages() {
+        def image = getBookImages()
+        if (image != null && image.exists() && image.list()) {
+            log.lifecycle("Staging project images to {}", getStagingDirectory());
+            project.copy {
+                into project.file(book.environment.stageDirName + '/images' + '/' + getBookImages().name)
+                from getBookImages()
+            }
+        }
+    }
 
-	@TaskAction
-	public void stageBookCSS() {
-		def css = getBookCss()
-		if ( css != null && css.exists() && css.list() ) {
-			log.lifecycle("Staging project css to {}", getStagingDirectory());
-			project.copy {
-				into project.file(book.environment.stageDirName + '/css' + '/' + getBookCss().name)
-				from getBookCss()
-			}
-		}
-	}
+    @TaskAction
+    public void stageBookCSS() {
+        def css = getBookCss()
+        if (css != null && css.exists() && css.list()) {
+            log.lifecycle("Staging project css to {}", getStagingDirectory());
+            project.copy {
+                into project.file(book.environment.stageDirName + '/css' + '/' + getBookCss().name)
+                from getBookCss()
+            }
+        }
+    }
 
-	@InputDirectory
-	@Optional
-	public File getBookImages() {
-		existsOrNull(book.environment.imagesDirectory)
-	}
+    @InputDirectory
+    @Optional
+    public File getBookImages() {
+        existsOrNull(book.environment.imagesDirectory)
+    }
 
-	@InputDirectory
-	@Optional
-	public File getBookCss() {
-		existsOrNull(book.environment.cssDirectory)
-	}
+    @InputDirectory
+    @Optional
+    public File getBookCss() {
+        existsOrNull(book.environment.cssDirectory)
+    }
 
-	@OutputDirectory
-	public File getStagingDirectory() {
-		if ( !book.environment.stagingDirectory.exists() ) {
-			book.environment.stagingDirectory.mkdir()
-		}
-		return book.environment.stagingDirectory
-	}
+    @OutputDirectory
+    public File getStagingDirectory() {
+        if (!book.environment.stagingDirectory.exists()) {
+            book.environment.stagingDirectory.mkdir()
+        }
+        return book.environment.stagingDirectory
+    }
 
 
-	Spec<File> jdocbookStyleSpec = new Spec<File>() {
-		boolean isSatisfiedBy(File file) {
-			return file.name.endsWith("jdocbook-style")
-		}
-	}
+    Spec<File> jdocbookStyleSpec = new Spec<File>() {
+        boolean isSatisfiedBy(File file) {
+            return file.name.endsWith("jdocbook-style")
+        }
+    }
 }

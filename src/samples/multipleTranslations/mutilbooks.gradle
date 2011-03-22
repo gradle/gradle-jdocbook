@@ -1,44 +1,70 @@
+/*
+ * jDocBook, processing of DocBook sources
+ *
+ * Copyright (c) 2011, Red Hat Inc. or third-party contributors as
+ * indicated by the @author tags or express copyright attribution
+ * statements applied by the authors.  All third-party contributions are
+ * distributed under license by Red Hat Inc.
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ * Boston, MA  02110-1301  USA
+ */
+
+
+
 /**
  * script with mutil-books support
  */
 
 jdocbook {
-	translations = ['zh-CN']
-	format('html_single') {
-		finalName = "index.html"
-		stylesheet = "classpath:/xslt/org/hibernate/jdocbook/xslt/xhtml-single.xsl"
-	}
-	
-	format('html') {
-		finalName = "index.html"
-		stylesheet = "classpath:/xslt/org/hibernate/jdocbook/xslt/xhtml.xsl"
-	}
+    translations = ['zh-CN']
+    format('html_single') {
+        finalName = "index.html"
+        stylesheet = "classpath:/xslt/org/hibernate/jdocbook/xslt/xhtml-single.xsl"
+    }
 
-	manual {
-		//override the default location (src/main/docbook/manual) of this book
-		baseDirName = "src/reference"
-		masterSourceDocumentName = 'HIBERNATE_-_Relational_Persistence_for_Idiomatic_Java.xml'
-		//generate pdf/html/html-single formats documents for this book
-		format {
-			name = "pdf"
-			finalName = "hibernate_reference.pdf"
-			stylesheet = "classpath:/xslt/org/hibernate/jdocbook/xslt/pdf.xsl"
-		}
-	}
-	
-	devguide {
-		masterSourceDocumentName = 'Hibernate_Developer_Guide.xml'
-		//override the finalName defined in the shared configuration
-		formats.html_single.finalName = 'hibernate.html'
-		//disable translation for this book
-		translations = []
-	}
+    format('html') {
+        finalName = "index.html"
+        stylesheet = "classpath:/xslt/org/hibernate/jdocbook/xslt/xhtml.xsl"
+    }
 
-	quickstart {
-		masterSourceDocumentName = 'Hibernate_Getting_Started_Guide.xml'
-		//disable html format
-		formats.html.enable = false
-		//add one more translation of de-DE
-		translation 'de-DE'
-	}
+    manual {
+        //override the default location (src/main/docbook/manual) of this book
+        baseDirName = "src/reference"
+        masterSourceDocumentName = 'HIBERNATE_-_Relational_Persistence_for_Idiomatic_Java.xml'
+        //generate pdf/html/html-single formats documents for this book
+        format {
+            name = "pdf"
+            finalName = "hibernate_reference.pdf"
+            stylesheet = "classpath:/xslt/org/hibernate/jdocbook/xslt/pdf.xsl"
+        }
+    }
+
+    devguide {
+        masterSourceDocumentName = 'Hibernate_Developer_Guide.xml'
+        //override the finalName defined in the shared configuration
+        formats.html_single.finalName = 'hibernate.html'
+        //disable translation for this book
+        translations = []
+    }
+
+    quickstart {
+        masterSourceDocumentName = 'Hibernate_Getting_Started_Guide.xml'
+        //disable html format
+        formats.html.enable = false
+        //add one more translation of de-DE
+        translation 'de-DE'
+    }
 }
