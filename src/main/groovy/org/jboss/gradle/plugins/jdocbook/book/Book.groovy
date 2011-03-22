@@ -110,13 +110,10 @@ class Book {
         String finalName
         String stylesheet
         boolean enable = true
-
-        @Override
         String getTargetFinalName() {
             return finalName
         }
 
-        @Override
         String getStylesheetResource() {
             return stylesheet
         }
@@ -135,7 +132,6 @@ class Book {
             this.stylesheet = parent.stylesheet
         }
 
-        @Override
         public String toString() {
             return "$name";
         }

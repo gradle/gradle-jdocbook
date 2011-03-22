@@ -50,7 +50,7 @@ repositories {
 }
 
 configurations {
-    deployerJars
+    deployerJars {description = 'Jars needed for doing deployment to JBoss Nexus repo'}
 }
 spock = ['org.spockframework:spock-core:0.5-groovy-1.7@jar',
         'org.hamcrest:hamcrest-core:1.1@jar',
@@ -76,7 +76,10 @@ dependencies {
     testCompile jmock, spock, slf4j_impl
     deployerJars "org.apache.maven.wagon:wagon-http:1.0-beta-6"
 }
+uploadArchives.dependsOn install
 
+targetCompatibility = "1.5"
+sourceCompatibility = "1.5"
 manifest.mainAttributes(
         provider: 'gradle',
         'Implementation-Url': 'http://jboss.org',
@@ -130,27 +133,13 @@ def pomConfig = {
 configure(install.repositories.mavenInstaller) {
     pom.project pomConfig
 }
-//
-//if (!hasProperty('MY_JBOSS_USER')) {
-//    MY_JBOSS_USER = "";
-//}
-//if (!hasProperty('MY_JBOSS_PASS')) {
-//    MY_JBOSS_PASS = "";
-//}
 
 uploadArchives {
     repositories.mavenDeployer {
         name = 'jbossDeployer'
         configuration = configurations.deployerJars
         pom.project pomConfig
-        repository(url: "https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/")
-        snapshotRepository(url: "https://repository.jboss.org/nexus/content/repositories/snapshots/")
-//        credentials = [userName: MY_JBOSS_USER, password: MY_JBOSS_PASS]
-//        repository(url: "https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/") {
-//            authentication(credentials)
-//        }
-//        snapshotRepository(url: "https://repository.jboss.org/nexus/content/repositories/snapshots/") {
-//            authentication(credentials)
-//        }
+        repository(id: "jboss-releases-repository",url: "https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/")
+        snapshotRepository(id: "jboss-snapshots-repository",url: "https://repository.jboss.org/nexus/content/repositories/snapshots/")
     }
 }

@@ -72,7 +72,7 @@ class BookEnvironment implements Environment, MasterLanguageDescriptor {
 
     private Locale language
 
-    @Override
+    
     Locale getLanguage() {
         if (language == null)
             language = getLanguage(book.masterLanguage)
@@ -89,7 +89,7 @@ class BookEnvironment implements Environment, MasterLanguageDescriptor {
 
     private Set<File> documentFiles;
 
-    @Override
+    
     Set<File> getDocumentFiles() {
         if (documentFiles == null) {
             documentFiles = [] as Set
@@ -100,7 +100,7 @@ class BookEnvironment implements Environment, MasterLanguageDescriptor {
 
     }
 
-    @Override
+    
     Environment.DocBookXsltResolutionStrategy getDocBookXsltResolutionStrategy() {
         return Environment.DocBookXsltResolutionStrategy.INCLUSIVE
     }
@@ -210,7 +210,7 @@ class BookEnvironment implements Environment, MasterLanguageDescriptor {
     class ResourceDelegate extends ResourceDelegateSupport {
         private ClassLoader loader;
 
-        @Override
+        
         protected ClassLoader getResourceClassLoader() {
             if (loader == null) {
                 loader = buildResourceDelegateClassLoader();

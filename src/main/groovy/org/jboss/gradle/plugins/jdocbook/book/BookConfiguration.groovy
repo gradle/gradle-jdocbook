@@ -45,17 +45,17 @@ class BookConfiguration implements Configuration {
     // IMAGE URI HANDLING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     boolean useRelativeImageUris = true;
 
-    @Override
+    
     boolean isUseRelativeImageUris() { useRelativeImageUris }
     // AUTO-DETECT FONTS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     boolean autoDetectFonts = false;
 
-    @Override
+    
     boolean isAutoDetectFontsEnabled() { return autoDetectFonts }
     // FONT CACHE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     boolean useFopFontCache = true;
 
-    @Override
+    
     boolean isUseFopFontCacheEnabled() { return useFopFontCache }
     // LOCALE SEPARATOR ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     char localeSeparator = '-';
@@ -65,7 +65,7 @@ class BookConfiguration implements Configuration {
     def injectionDateFormat = "yyyy-MM-dd"
     LinkedHashSet<ValueInjection> valueInjections = new LinkedHashSet<ValueInjection>();
 
-    @Override
+    
     LinkedHashSet<ValueInjection> getValueInjections() {
         if (applyStandardInjectionValues) {
             valueInjections.add(new ValueInjection("version", book.version));
@@ -102,14 +102,14 @@ class BookConfiguration implements Configuration {
         catalogs.add(catalog);
     }
 
-    @Override
+    
     LinkedHashSet<String> getCatalogs() {
         return catalogs
     }
 
     def profiling = new Profiling()
 
-    @Override
+    
     Profiling getProfiling() {
         return profiling
     }
@@ -131,7 +131,7 @@ class BookConfiguration implements Configuration {
         ConfigureUtil.configureByMap(settings, profiling);
     }
 
-    @Override
+    
     String getDocBookVersion() {
         return null
     }
