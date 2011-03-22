@@ -57,14 +57,18 @@ class BookEnvironment implements Environment, MasterLanguageDescriptor {
 		return resourceDelegate
 	}
 
-	@Override
-	Set<File> getDocumentFiles() {
-		def files = [] as Set
-		files << getRootDocumentFile()
-		XIncludeHelper.findAllInclusionFiles(getRootDocumentFile(), files);
-		return files
+    private Set<File> documentFiles;
 
-	}
+    @Override
+    Set<File> getDocumentFiles() {
+        if (documentFiles == null) {
+            documentFiles = [] as Set
+            documentFiles << getRootDocumentFile()
+            XIncludeHelper.findAllInclusionFiles(getRootDocumentFile(), documentFiles);
+        }
+        return documentFiles
+
+    }
 
 	@Override
 	Environment.DocBookXsltResolutionStrategy getDocBookXsltResolutionStrategy() {
