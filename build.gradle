@@ -21,10 +21,21 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
+buildscript {
+    repositories {
+        mavenCentral()
+        mavenRepo name: "jboss", urls: "http://repository.jboss.org/nexus/content/groups/public/"
+        mavenRepo urls: "file://" + System.getProperty('user.home') + "/.m2/repository/"
+    }
+    dependencies {
+        classpath 'org.hibernate.build.gradle:gradle-upload-auth-plugin:1.0.0'
+    }
+}
 apply plugin: 'groovy'
 apply plugin: 'maven'   // used for 'install' and 'upload'/'deploy' task
 apply plugin: 'eclipse'
 apply plugin: 'idea'
+apply plugin: 'uploadAuth'
 apply { url: 'https://loom.svn.sourceforge.net/svnroot/loom/shared/trunk/artifacts.gradle' } // sets up source and javadoc jar uploads
 
 group = 'org.jboss.jdocbook'
@@ -119,25 +130,27 @@ def pomConfig = {
 configure(install.repositories.mavenInstaller) {
     pom.project pomConfig
 }
-
-if (!hasProperty('MY_JBOSS_USER')) {
-    MY_JBOSS_USER = "";
-}
-if (!hasProperty('MY_JBOSS_PASS')) {
-    MY_JBOSS_PASS = "";
-}
+//
+//if (!hasProperty('MY_JBOSS_USER')) {
+//    MY_JBOSS_USER = "";
+//}
+//if (!hasProperty('MY_JBOSS_PASS')) {
+//    MY_JBOSS_PASS = "";
+//}
 
 uploadArchives {
     repositories.mavenDeployer {
         name = 'jbossDeployer'
         configuration = configurations.deployerJars
         pom.project pomConfig
-        credentials = [userName: MY_JBOSS_USER, password: MY_JBOSS_PASS]
-        repository(url: "https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/") {
-            authentication(credentials)
-        }
-        snapshotRepository(url: "https://repository.jboss.org/nexus/content/repositories/snapshots/") {
-            authentication(credentials)
-        }
+        repository(url: "https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/")
+        snapshotRepository(url: "https://repository.jboss.org/nexus/content/repositories/snapshots/")
+//        credentials = [userName: MY_JBOSS_USER, password: MY_JBOSS_PASS]
+//        repository(url: "https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/") {
+//            authentication(credentials)
+//        }
+//        snapshotRepository(url: "https://repository.jboss.org/nexus/content/repositories/snapshots/") {
+//            authentication(credentials)
+//        }
     }
 }
