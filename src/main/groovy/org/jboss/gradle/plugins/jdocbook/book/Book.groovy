@@ -88,7 +88,9 @@ class Book {
             throw new UnsupportedOperationException("abstract book doesn't have component registry")
         }
     }
-
+    def format(String name){
+        format(new FormatOption(name))
+    }
     def format(Closure closure) {
         format(null, closure)
     }
