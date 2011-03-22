@@ -51,9 +51,19 @@ class Book {
 		this.version = project.version
 		this.configuration = new BookConfiguration(this);
 		this.environment = new BookEnvironment(this, project)
-		this.componentRegistry = new JDocBookComponentRegistry(environment, configuration)
+
 
 	}
+    public JDocBookComponentRegistry getComponentRegistry(){
+        if(concrete){
+            if(componentRegistry==null){
+               this.componentRegistry = new JDocBookComponentRegistry(environment, configuration)
+            }
+            return componentRegistry
+        }else{
+            throw new UnsupportedOperationException("abstract book doesn't have component registry")
+        }
+   }
 
 	def format(Closure closure) {
 		format(null,closure)
