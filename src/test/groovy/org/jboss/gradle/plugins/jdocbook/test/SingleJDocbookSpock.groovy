@@ -57,6 +57,17 @@ class SingleJDocbookSpock extends AbstractJDocbookSpock {
         book.translations == ["zh-CN"]
     }
 
+    def "does transformer parameters get set correctly"(){
+                applyScript DEFAULT_SCRIPT
+        expect:
+        convention != null
+        convention.books != null
+        convention.commonBook != null
+        def book = convention.commonBook
+        !book.transformerParameters.isEmpty()
+        book.transformerParameters.get("a") == "b"
+    }
+
     def checkFormat(def format) {
         assert FORMATS[format.name].finalName == format.finalName
         assert FORMATS[format.name].stylesheet == format.stylesheet

@@ -78,6 +78,8 @@ class MutilBooksSpock extends AbstractJDocbookSpock {
             checkFormat(format)
         }
         common.translations == ["zh-CN"]
+        !common.transformerParameters.isEmpty()
+        common.transformerParameters.get("a") == "b"
         //assert manual book
         def manual = convention.books.manual
         manual != null
@@ -87,6 +89,8 @@ class MutilBooksSpock extends AbstractJDocbookSpock {
             checkFormat(format)
         }
         manual.translations == ["zh-CN"]
+        !manual.transformerParameters.isEmpty()
+        manual.transformerParameters.get("a") == "c"
         //assert devguide book
         def devguide = convention.books.devguide
         devguide != null
@@ -96,6 +100,8 @@ class MutilBooksSpock extends AbstractJDocbookSpock {
         //FIXME formats should not contains PDF
         //devguide.formats
         devguide.formats.html.stylesheet == "classpath:/xslt/org/hibernate/jdocbook/xslt/xhtml.xsl"
+        !devguide.transformerParameters.isEmpty()
+        devguide.transformerParameters.get("a") == "b"
 
         //assert quickstart book
         def quickstart = convention.books.quickstart

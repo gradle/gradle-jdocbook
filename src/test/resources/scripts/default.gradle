@@ -36,6 +36,7 @@ jdocbook {
         finalName = 'index.html'
         stylesheet = "classpath:/xslt/org/hibernate/jdocbook/xslt/xhtml-single.xsl"
     }
+    transformerParameters = ["a":"b"]
     format {
         name = 'html'
         finalName = 'index.html'

@@ -32,6 +32,7 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.listener.ActionBroadcast
 import org.jboss.gradle.plugins.jdocbook.book.Book
+import org.jboss.gradle.plugins.jdocbook.book.BookConfiguration
 
 /**
  * @author Strong Liu
@@ -41,6 +42,8 @@ class JDocBookConvention {
     final NamedDomainObjectContainer<Book> books;
     @Delegate
     Book commonBook
+    @Delegate
+    BookConfiguration bookConfiguration;
     Project project
     ActionBroadcast<Book> configBookActions = new ActionBroadcast<Book>();
 
@@ -48,6 +51,8 @@ class JDocBookConvention {
         this.project = project
         this.books = books
         this.commonBook = new Book("", project)
+        this.bookConfiguration = new BookConfiguration(commonBook)
+        commonBook.setConfiguration(bookConfiguration)
         /**
          * if it is a mutil-books project, then we have to merge the info defined in the common book
          * area into each book, and also mark the internal common book as abstract

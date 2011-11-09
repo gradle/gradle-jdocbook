@@ -40,9 +40,12 @@ jdocbook {
         stylesheet = "classpath:/xslt/org/hibernate/jdocbook/xslt/xhtml.xsl"
     }
 
+    transformerParameters = ["a":"b"]
+
     manual {
         //baseDirectory = baseDir + 'hibernate-manual' // CoC, scriptsdefault baseDirectory is baseDir+bookName
         masterSourceDocumentName = 'HIBERNATE_-_Relational_Persistence_for_Idiomatic_Java.xml'
+        transformerParameters = ["a":"c"]
         format {
             name = "pdf"
             finalName = "hibernate_reference.pdf"
