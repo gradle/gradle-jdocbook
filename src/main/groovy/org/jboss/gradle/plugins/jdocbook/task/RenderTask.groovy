@@ -21,18 +21,20 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-
-
-
 package org.jboss.gradle.plugins.jdocbook.task
 
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.TaskAction
 import org.gradle.util.ObservableUrlClassLoader
 import org.jboss.gradle.plugins.jdocbook.JDocBookPlugin
 import org.jboss.gradle.plugins.jdocbook.book.Book
 import org.jboss.jdocbook.render.RenderingSource
-import org.gradle.api.tasks.*
 
 /**
  * Task for performing DocBook rendering.

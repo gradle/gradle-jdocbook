@@ -21,9 +21,6 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-
-
-
 package org.jboss.gradle.plugins.jdocbook.book
 
 import java.text.SimpleDateFormat
@@ -33,39 +30,42 @@ import org.jboss.jdocbook.Profiling
 import org.jboss.jdocbook.ValueInjection
 
 /**
+ * An implementation of the jDocBook {@link Configuration} contract specific to each configured book
  *
  * @author: Strong Liu
  */
 class BookConfiguration implements Configuration {
     def Book book
 
+    boolean useRelativeImageUris = true;
+    boolean autoDetectFonts = false;
+    boolean useFopFontCache = true;
+    char localeSeparator = '-';
+    Map<String, String> transformerParameters = [:]
+    LinkedHashSet<ValueInjection> valueInjections = new LinkedHashSet<ValueInjection>();
+    def applyStandardInjectionValues = true;
+    def injectionDateFormat = "yyyy-MM-dd"
+
+    def profiling = new Profiling()
+
+    LinkedHashSet<String> catalogs = new LinkedHashSet<String>();
+
     BookConfiguration(Book book) {
         this.book = book
     }
-    // IMAGE URI HANDLING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    boolean useRelativeImageUris = true;
 
-    
-    boolean isUseRelativeImageUris() { useRelativeImageUris }
-    // AUTO-DETECT FONTS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    boolean autoDetectFonts = false;
+    boolean isUseRelativeImageUris() {
+        useRelativeImageUris
+    }
 
-    
-    boolean isAutoDetectFontsEnabled() { return autoDetectFonts }
-    // FONT CACHE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    boolean useFopFontCache = true;
+    boolean isAutoDetectFontsEnabled() {
+        return autoDetectFonts
+    }
 
-    
-    boolean isUseFopFontCacheEnabled() { return useFopFontCache }
-    // LOCALE SEPARATOR ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    char localeSeparator = '-';
-    Map<String, String> transformerParameters = [:]
-    // VALUE INJECTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    def applyStandardInjectionValues = true;
-    def injectionDateFormat = "yyyy-MM-dd"
-    LinkedHashSet<ValueInjection> valueInjections = new LinkedHashSet<ValueInjection>();
+    boolean isUseFopFontCacheEnabled() {
+        return useFopFontCache
+    }
 
-    
     LinkedHashSet<ValueInjection> getValueInjections() {
         if (applyStandardInjectionValues) {
             valueInjections.add(new ValueInjection("version", book.version));
@@ -78,6 +78,7 @@ class BookConfiguration implements Configuration {
     public void valueInjection(String name, String value) {
         valueInjections << new ValueInjection(name, value)
     }
+
     /**
      * Allow configuration by closure
      *
@@ -96,20 +97,14 @@ class BookConfiguration implements Configuration {
         valueInjections << ConfigureUtil.configureByMap(settings, new ValueInjection())
     }
 
-    LinkedHashSet<String> catalogs = new LinkedHashSet<String>();
-
     public void catalog(String catalog) {
         catalogs.add(catalog);
     }
 
-    
     LinkedHashSet<String> getCatalogs() {
         return catalogs
     }
 
-    def profiling = new Profiling()
-
-    
     Profiling getProfiling() {
         return profiling
     }
@@ -131,7 +126,6 @@ class BookConfiguration implements Configuration {
         ConfigureUtil.configureByMap(settings, profiling);
     }
 
-    
     String getDocBookVersion() {
         return null
     }

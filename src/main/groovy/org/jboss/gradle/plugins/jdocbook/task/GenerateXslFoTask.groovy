@@ -21,9 +21,6 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-
-
-
 package org.jboss.gradle.plugins.jdocbook.task
 
 import org.gradle.api.logging.Logger
@@ -37,7 +34,9 @@ import org.jboss.jdocbook.render.RenderingSource
 import org.jboss.jdocbook.util.StandardDocBookFormatMetadata
 
 /**
- * TODO : javadoc
+ * Generates an XSL-FO file.  If you happen to run into problems with the FOP library in terms of PDF generation, the
+ * FOP team will always want to see your FO file.  Our normal generation process skips the generation of this physical
+ * file.  This task allows creation of that file for such cases.
  *
  * @author Steve Ebersole
  * @author Strong Liu
@@ -86,7 +85,6 @@ public class GenerateXslFoTask extends BookTask implements RenderingSource {
     }
 
     File resolvePublishingBaseDirectory() {
-        //n/a
         return null
     }
 }

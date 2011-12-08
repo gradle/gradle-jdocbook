@@ -21,11 +21,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-
-
-
 package org.jboss.gradle.plugins.jdocbook;
-
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -35,7 +31,7 @@ import org.jboss.gradle.plugins.jdocbook.book.Book
 import org.jboss.gradle.plugins.jdocbook.task.CreateTasksPerBookAction
 
 /**
- * The Gradle plugin for jDocbook
+ * The Gradle plugin for jDocBook
  *
  * @author Steve Ebersole
  * @author Strong Liu

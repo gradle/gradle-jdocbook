@@ -21,17 +21,17 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-
-
 package org.jboss.gradle.plugins.jdocbook.task;
-
 
 import org.gradle.api.artifacts.Configuration.State
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
-import org.gradle.api.specs.Spec
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.TaskAction
 import org.jboss.gradle.plugins.jdocbook.JDocBookPlugin
-import org.gradle.api.tasks.*
 
 /**
  * Applies staging of style artifacts
@@ -53,7 +53,7 @@ public class StyleStagingTask extends BookTask {
         if (jdocbookStyle.state != State.RESOLVED) {
             jdocbookStyle.resolve();
         }
-        jdocbookStyle.filter(jdocbookStyleSpec).each {File file ->
+        jdocbookStyle.each {File file ->
             project.copy {
                 into(getStagingDirectory())
                 from(project.zipTree(file).matching { exclude "META-INF/**" })
@@ -105,10 +105,4 @@ public class StyleStagingTask extends BookTask {
         return book.environment.stagingDirectory
     }
 
-
-    Spec<File> jdocbookStyleSpec = new Spec<File>() {
-        boolean isSatisfiedBy(File file) {
-            return file.name.endsWith("jdocbook-style")
-        }
-    }
 }

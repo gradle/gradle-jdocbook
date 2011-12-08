@@ -21,9 +21,6 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-
-
-
 package org.jboss.gradle.plugins.jdocbook.task
 
 import org.gradle.api.logging.Logger

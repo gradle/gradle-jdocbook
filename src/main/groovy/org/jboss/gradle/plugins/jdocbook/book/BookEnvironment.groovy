@@ -21,9 +21,6 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-
-
-
 package org.jboss.gradle.plugins.jdocbook.book
 
 import org.gradle.api.Project
@@ -39,20 +36,25 @@ import org.jboss.jdocbook.util.TranslationUtils
 import org.jboss.jdocbook.util.XIncludeHelper
 
 /**
+ * An implementation of the jDocBook {@link Environment} contract specific to each configured book
  *
  * @author: Strong Liu
  */
 class BookEnvironment implements Environment, MasterLanguageDescriptor {
     private static final Logger log = Logging.getLogger(Environment);
+
     Book book;
-    MasterLanguageDescriptor masterLanguageDescriptor;
     Project project
+    MasterLanguageDescriptor masterLanguageDescriptor;
+    private Locale language
     ResourceDelegate resourceDelegate
     def outputDirName
     def workDirName
     def stageDirName
     def publishDirName
     def profileDirName
+
+    private Set<File> documentFiles;
 
     BookEnvironment(Book book, Project project) {
         this.book = book
@@ -70,9 +72,7 @@ class BookEnvironment implements Environment, MasterLanguageDescriptor {
         this.profileDirName = "$outputDirName/profile/${book.name}"
     }
 
-    private Locale language
 
-    
     Locale getLanguage() {
         if (language == null)
             language = getLanguage(book.masterLanguage)
@@ -87,9 +87,6 @@ class BookEnvironment implements Environment, MasterLanguageDescriptor {
         return resourceDelegate
     }
 
-    private Set<File> documentFiles;
-
-    
     Set<File> getDocumentFiles() {
         if (documentFiles == null) {
             documentFiles = [] as Set
@@ -97,10 +94,8 @@ class BookEnvironment implements Environment, MasterLanguageDescriptor {
             XIncludeHelper.findAllInclusionFiles(getRootDocumentFile(), documentFiles);
         }
         return documentFiles
-
     }
 
-    
     Environment.DocBookXsltResolutionStrategy getDocBookXsltResolutionStrategy() {
         return Environment.DocBookXsltResolutionStrategy.INCLUSIVE
     }
@@ -126,13 +121,12 @@ class BookEnvironment implements Environment, MasterLanguageDescriptor {
                 }
             }
         }
+
         feedingClasspathWithDependencies(project.configurations."${JDocBookPlugin.DOCBOOK_CONFIG_NAME}")
         feedingClasspathWithDependencies(project.buildscript.configurations."${ScriptHandler.CLASSPATH_CONFIGURATION}")
         feedingClasspathWithDependencies(project.configurations."${JDocBookPlugin.STYLES_CONFIG_NAME}")
-        return new URLClassLoader(
-                urls.toArray(new URL[urls.size()]),
-                Thread.currentThread().getContextClassLoader()
-        );
+
+        return new URLClassLoader( urls.toArray(new URL[urls.size()]), Thread.currentThread().getContextClassLoader() );
     }
 
     File getWorkDirectory() {
@@ -210,7 +204,6 @@ class BookEnvironment implements Environment, MasterLanguageDescriptor {
     class ResourceDelegate extends ResourceDelegateSupport {
         private ClassLoader loader;
 
-        
         protected ClassLoader getResourceClassLoader() {
             if (loader == null) {
                 loader = buildResourceDelegateClassLoader();

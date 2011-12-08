@@ -21,9 +21,6 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-
-
-
 package org.jboss.gradle.plugins.jdocbook.task
 
 import org.gradle.api.DefaultTask
@@ -34,6 +31,7 @@ import org.jboss.gradle.plugins.jdocbook.book.Book
 
 /**
  * Abstract book tasks, which set task group and also apply Spec
+ * 
  * @author: Strong Liu
  */
 abstract class BookTask extends DefaultTask {

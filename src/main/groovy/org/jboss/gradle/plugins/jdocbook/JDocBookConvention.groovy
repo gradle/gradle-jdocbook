@@ -21,9 +21,6 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-
-
-
 package org.jboss.gradle.plugins.jdocbook
 
 import org.gradle.api.NamedDomainObjectContainer
@@ -35,6 +32,7 @@ import org.jboss.gradle.plugins.jdocbook.book.Book
 import org.jboss.gradle.plugins.jdocbook.book.BookConfiguration
 
 /**
+ * The top-level convention object exposed to the Gradle build for jDocBook configuration
  * @author Strong Liu
  */
 class JDocBookConvention {

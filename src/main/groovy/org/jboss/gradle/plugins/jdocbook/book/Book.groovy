@@ -21,9 +21,6 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-
-
-
 package org.jboss.gradle.plugins.jdocbook.book
 
 import org.gradle.api.NamedDomainObjectContainer
@@ -35,35 +32,38 @@ import org.jboss.jdocbook.JDocBookComponentRegistry
 import org.jboss.jdocbook.render.FormatOptions
 
 /**
- * todo javadoc
+ * The notion of a book exposed to gradle script for configuration.
  *
  * @author Strong Liu
  */
 class Book {
     final static Logger log = Logging.getLogger(Book);
+
+    @Delegate
+    BookConfiguration configuration
+
+    String name
     def masterSourceDocumentName = "book.xml"
     /**
      * default language of the book is en-US, if the book is not language aware, then this should be
      * override to ''
      */
     def masterLanguage = "en-US"
-    String name
     NamedDomainObjectContainer<FormatOption> formats
     def translations = []
-    @Delegate
-    BookConfiguration configuration
     def baseDirName
     def potDirName
     def imagesDirName
     def cssDirName
     def fontsDirName
     def version
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~ internal use only
+
+    // internal use only ~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def concrete = true
     JDocBookComponentRegistry componentRegistry
     BookEnvironment environment
     Project project
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     public Book(String name, Project project) {
         this.name = name
@@ -74,8 +74,6 @@ class Book {
         this.version = project.version
         this.configuration = new BookConfiguration(this);
         this.environment = new BookEnvironment(this, project)
-
-
     }
 
     public JDocBookComponentRegistry getComponentRegistry() {
@@ -84,7 +82,8 @@ class Book {
                 this.componentRegistry = new JDocBookComponentRegistry(environment, configuration)
             }
             return componentRegistry
-        } else {
+        }
+        else {
             throw new UnsupportedOperationException("abstract book doesn't have component registry")
         }
     }
@@ -107,6 +106,14 @@ class Book {
         translations << lang
     }
 
+    def transformerParameters(Map<String,?> parameters) {
+        transformerParameters << parameters;
+    }
+
+    def transformerParameter(String key, Object value) {
+        transformerParameters.put( key, value );
+    }
+
     static class FormatOption implements FormatOptions {
         String name
         String finalName
@@ -119,7 +126,6 @@ class Book {
         String getStylesheetResource() {
             return stylesheet
         }
-
 
         FormatOption() {
         }

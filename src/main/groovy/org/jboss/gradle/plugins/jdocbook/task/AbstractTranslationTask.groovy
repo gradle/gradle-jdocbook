@@ -21,11 +21,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-
-
-
 package org.jboss.gradle.plugins.jdocbook.task;
-
 
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputDirectory
@@ -38,7 +34,6 @@ import org.jboss.jdocbook.translate.TranslationSource
  * @author Steve Ebersole
  */
 public class AbstractTranslationTask extends BookTask implements TranslationSource {
-
 
     public File resolveTranslatedXmlDirectory() {
         getTranslatedXmlDir()
