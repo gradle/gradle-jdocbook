@@ -34,6 +34,7 @@ import org.jboss.jdocbook.MasterLanguageDescriptor
 import org.jboss.jdocbook.util.ResourceDelegateSupport
 import org.jboss.jdocbook.util.TranslationUtils
 import org.jboss.jdocbook.util.XIncludeHelper
+import org.jboss.jdocbook.DocBookSchemaResolutionStrategy
 
 /**
  * An implementation of the jDocBook {@link Environment} contract specific to each configured book
@@ -46,6 +47,7 @@ class BookEnvironment implements Environment, MasterLanguageDescriptor {
     Book book;
     Project project
     MasterLanguageDescriptor masterLanguageDescriptor;
+    DocBookSchemaResolutionStrategy docBookSchemaResolutionStrategy = DocBookSchemaResolutionStrategy.RNG;
     private Locale language
     ResourceDelegate resourceDelegate
     def outputDirName
@@ -72,7 +74,6 @@ class BookEnvironment implements Environment, MasterLanguageDescriptor {
         this.profileDirName = "$outputDirName/profile/${book.name}"
     }
 
-
     Locale getLanguage() {
         if (language == null)
             language = getLanguage(book.masterLanguage)
@@ -91,7 +92,7 @@ class BookEnvironment implements Environment, MasterLanguageDescriptor {
         if (documentFiles == null) {
             documentFiles = [] as Set
             documentFiles << getRootDocumentFile()
-            XIncludeHelper.findAllInclusionFiles(getRootDocumentFile(), documentFiles);
+            XIncludeHelper.findAllInclusionFiles(getRootDocumentFile(), documentFiles, getDocBookSchemaResolutionStrategy());
         }
         return documentFiles
     }
