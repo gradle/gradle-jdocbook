@@ -77,15 +77,13 @@ class Book {
     }
 
     public JDocBookComponentRegistry getComponentRegistry() {
-        if (concrete) {
-            if (componentRegistry == null) {
+        if ( concrete ) {
+            if ( componentRegistry == null ) {
                 this.componentRegistry = new JDocBookComponentRegistry(environment, configuration)
             }
             return componentRegistry
         }
-        else {
-            throw new UnsupportedOperationException("abstract book doesn't have component registry")
-        }
+        throw new UnsupportedOperationException("abstract book doesn't have component registry")
     }
     def format(String name){
         format(new FormatOption(name))
@@ -99,7 +97,11 @@ class Book {
     }
 
     def format(FormatOption f) {
-        formats.addObject(f.name, new FormatOption(f))
+        FormatOption sd = formats.create(f.name)
+        sd.finalName = f.finalName
+        sd.stylesheet = f.stylesheet
+        sd.enable = f.enable
+//        formats.addObject(f.name, new FormatOption(f))
     }
 
     def translation(lang) {

@@ -56,36 +56,36 @@ configurations {
 }
 
 spock = ['org.spockframework:spock-core:0.5-groovy-1.8@jar',
-        'org.hamcrest:hamcrest-core:1.1@jar',
+        'org.hamcrest:hamcrest-core:1.2.1@jar',
+        'org.hamcrest:hamcrest-library:1.2.1@jar',
         'cglib:cglib-nodep:2.2',
         'org.objenesis:objenesis:1.2']
 jmock = ['org.jmock:jmock:2.5.1@jar',
         'org.hamcrest:hamcrest-core:1.1@jar',
-        'org.hamcrest:hamcrest-library:1.1@jar',
         'org.jmock:jmock-junit4:2.5.1@jar',
         'org.jmock:jmock-legacy:2.5.1@jar',
         'org.objenesis:objenesis:1.2',
         'cglib:cglib-nodep:2.2']
 slf4j_impl = ['org.slf4j:slf4j-simple:1.6.1@jar',
         'org.slf4j:jcl-over-slf4j:1.6.1@jar']
-
+jdocbook = 'org.jboss.jdocbook:jdocbook-core:1.0.6'
 dependencies {
     compile gradleApi()
     compile localGroovy()
-    compile 'org.jboss.jdocbook:jdocbook-core:1.0.6-SNAPSHOT'
-    compile 'org.apache.ant:ant:1.7.0'
+    compile jdocbook
+    compile 'org.apache.ant:ant:1.7.0' //don't see why we need this here
 
     groovy localGroovy()
     testCompile 'junit:junit:4.8.1'
     testCompile jmock
     testCompile spock
     testCompile slf4j_impl
-    deployerJars "org.apache.maven.wagon:wagon-http:1.0-beta-6"
+    deployerJars "org.apache.maven.wagon:wagon-http:1.0"
 }
 uploadArchives.dependsOn install
 
-targetCompatibility = "1.5"
-sourceCompatibility = "1.5"
+targetCompatibility = "1.6"
+sourceCompatibility = "1.6"
 manifest.mainAttributes(
         provider: 'gradle',
         'Implementation-Url': 'http://jboss.org',

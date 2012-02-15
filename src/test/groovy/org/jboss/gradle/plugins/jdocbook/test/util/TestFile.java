@@ -34,7 +34,7 @@ import org.gradle.api.internal.file.IdentityFileResolver;
 import org.gradle.api.internal.file.copy.DeleteActionImpl;
 import org.gradle.util.AntUtil;
 import org.gradle.util.GFileUtils;
-import org.gradle.util.HashUtil;
+import org.gradle.util.hash.HashUtil;
 import org.hamcrest.Matcher;
 
 import java.io.*;
@@ -445,7 +445,7 @@ public class TestFile extends File implements TestFileContext {
 
         public Snapshot() {
             modTime = lastModified();
-            hash = HashUtil.createHash(TestFile.this);
+            hash = HashUtil.createHash(TestFile.this,"MD5").asByteArray();
         }
     }
 }
