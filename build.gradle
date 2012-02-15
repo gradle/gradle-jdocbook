@@ -67,7 +67,7 @@ jmock = ['org.jmock:jmock:2.5.1@jar',
         'cglib:cglib-nodep:2.2']
 slf4j_impl = ['org.slf4j:slf4j-simple:1.6.1@jar',
         'org.slf4j:jcl-over-slf4j:1.6.1@jar']
-jdocbook = 'org.jboss.jdocbook:jdocbook-core:1.0.6'
+jdocbook = 'org.jboss.jdocbook:jdocbook-core:1.0.7'
 dependencies {
     compile gradleApi()
     compile localGroovy()
