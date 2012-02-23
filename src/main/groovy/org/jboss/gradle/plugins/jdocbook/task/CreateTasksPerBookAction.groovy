@@ -144,7 +144,6 @@ class CreateTasksPerBookAction implements Action<Book> {
                     xslFoTask.description = String.format("Generating %s XSL FO files", getDescriptionName(book.name))
                     xslFoTask.configure(book, lang)
                 }
-                render.dependsOn xslFoTask
             }
             getTask(getTaskName(CreateTasksPerBookAction.RENDER_TASK_GROUP, book.name)).dependsOn render
         }
