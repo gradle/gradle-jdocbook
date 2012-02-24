@@ -51,6 +51,8 @@ public class GenerateXslFoTask extends BookTask implements RenderingSource {
         final FormatOptions pdfFormatOptions = findPdfFormatOptions();
         log.trace("found pdf format options");
 
+		ScriptClassLoaderExtender.extendScriptClassLoader( project );
+
         book.componentRegistry.xslFoGenerator.generateXslFo(
                 this,
                 pdfFormatOptions

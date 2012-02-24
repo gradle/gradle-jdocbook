@@ -26,13 +26,10 @@ package org.jboss.gradle.plugins.jdocbook.task
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
-import org.gradle.util.ObservableUrlClassLoader
-import org.jboss.gradle.plugins.jdocbook.JDocBookPlugin
 import org.jboss.gradle.plugins.jdocbook.book.Book
 import org.jboss.jdocbook.render.RenderingSource
 
@@ -67,28 +64,10 @@ class RenderTask extends BookTask implements RenderingSource {
     private static boolean scriptClassLoaderExtended = false;
 
     private void prepareForRendering() {
-        if (scriptClassLoaderExtended) {
-            return;
-        }
-        scriptClassLoaderExtended = true;
-        log.lifecycle("Extending script classloader with the {} dependencies", JDocBookPlugin.STYLES_CONFIG_NAME);
-        ClassLoader classloader = project.buildscript.classLoader
-        if (classloader instanceof ObservableUrlClassLoader) {
-            ObservableUrlClassLoader scriptClassloader = (ObservableUrlClassLoader) classloader;
-            for (File file: project.configurations.getByName(JDocBookPlugin.STYLES_CONFIG_NAME).getFiles()) {
-                try {
-                    scriptClassloader.addURL(file.toURI().toURL());
-                }
-                catch (MalformedURLException e) {
-                    log.warn("Unable to retrieve file url [" + file.getAbsolutePath() + "]; ignoring");
-                }
-            }
-            Thread.currentThread().setContextClassLoader(classloader)
-        }
+		ScriptClassLoaderExtender.extendScriptClassLoader( project );
     }
 
     @Override
-    @InputDirectory
     @Optional
     File getXslFoDirectory() {
         existsOrNull(book.environment.getWorkDirPerLang("xsl-fo"))

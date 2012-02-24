@@ -29,6 +29,7 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.jboss.gradle.plugins.jdocbook.book.Book
 import org.jboss.gradle.plugins.jdocbook.task.CreateTasksPerBookAction
+import org.gradle.api.artifacts.Configuration
 
 /**
  * The Gradle plugin for jDocBook
@@ -39,6 +40,7 @@ import org.jboss.gradle.plugins.jdocbook.task.CreateTasksPerBookAction
 public class JDocBookPlugin implements Plugin<Project> {
     private static final Logger log = Logging.getLogger(JDocBookPlugin);
     public static final String STYLES_CONFIG_NAME = "jdocbookStyles";
+    public static final String XSL_CONFIG_NAME = "jdocbookXsl";
     public static final String DOCBOOK_CONFIG_NAME = "jdocbook";
 
     public void apply(final Project project) {
@@ -50,7 +52,18 @@ public class JDocBookPlugin implements Plugin<Project> {
     }
 
     private void applyConfiguration(Project project) {
-        project.configurations.add(DOCBOOK_CONFIG_NAME).setVisible(false).setTransitive(false).setDescription("The DocBook artifact(s) to use.");
-        project.configurations.add(STYLES_CONFIG_NAME).setVisible(false).setTransitive(true).setDescription("Defines any jDocBook styles artifacts to apply");
+        Configuration deprecatedConfig = project.configurations.add(DOCBOOK_CONFIG_NAME)
+				.setVisible(false)
+				.setTransitive(false)
+				.setDescription( "The DocBook artifact(s) to use (deprecated, use jdocbookXsl instead)." );
+        project.configurations.add(XSL_CONFIG_NAME)
+				.extendsFrom( deprecatedConfig )
+				.setVisible(false)
+				.setTransitive(true)
+				.setDescription( "Defines any DocBook XSL artifacts to make available to the build" );
+        project.configurations.add(STYLES_CONFIG_NAME)
+				.setVisible(false)
+				.setTransitive(true)
+				.setDescription("Defines any jDocBook styles artifacts to apply");
     }
 }
