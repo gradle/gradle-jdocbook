@@ -28,7 +28,7 @@ buildscript {
         mavenRepo name: "jboss", url: "http://repository.jboss.org/nexus/content/groups/public/"
     }
     dependencies {
-        classpath 'org.hibernate.build.gradle:gradle-upload-auth-plugin:1.1.0'
+        classpath 'org.hibernate.build.gradle:gradle-upload-auth-plugin:1.1.1'
     }
 }
 
@@ -164,5 +164,5 @@ uploadArchives.dependsOn sourcesJar
 uploadArchives.dependsOn install
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.0-milestone-8'
+    gradleVersion = '1.0-milestone-8a'
 }
