@@ -75,7 +75,7 @@ jmock = ['org.jmock:jmock:2.5.1@jar',
 dependencies {
     compile gradleApi()
     compile localGroovy()
-    compile 'org.jboss.jdocbook:jdocbook-core:1.1.0-SNAPSHOT'
+    compile 'org.jboss.jdocbook:jdocbook-core:1.1.0'
     compile 'org.apache.ant:ant:1.7.0' //don't see why we need this here
 
     groovy localGroovy()
