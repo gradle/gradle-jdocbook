@@ -2,6 +2,7 @@
 *.ipr
 *.iws
 .idea
+atlassian-ide-plugin.xml
 build
 .gradle
 .project
