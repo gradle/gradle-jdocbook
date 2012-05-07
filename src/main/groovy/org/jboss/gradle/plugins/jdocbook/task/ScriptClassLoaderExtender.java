@@ -6,7 +6,7 @@ import java.net.MalformedURLException;
 import org.gradle.api.Project;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
-import org.gradle.util.ObservableUrlClassLoader;
+import org.gradle.util.MutableURLClassLoader;
 import org.jboss.gradle.plugins.jdocbook.JDocBookPlugin;
 
 /**
@@ -26,8 +26,8 @@ public class ScriptClassLoaderExtender {
 
 		log.lifecycle( "Extending script classloader with the {} dependencies", JDocBookPlugin.XSL_CONFIG_NAME );
         final ClassLoader classloader = project.getBuildscript().getClassLoader();
-        if ( classloader instanceof ObservableUrlClassLoader ) {
-			final ObservableUrlClassLoader scriptClassloader = (ObservableUrlClassLoader) classloader;
+        if ( classloader instanceof MutableURLClassLoader ) {
+			final MutableURLClassLoader scriptClassloader = (MutableURLClassLoader) classloader;
             for ( File file : project.getConfigurations().getByName( JDocBookPlugin.XSL_CONFIG_NAME ).getFiles() ) {
                 try {
 					log.trace( "  Adding artifact to script classloader extension : " + file.getPath() );

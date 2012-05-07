@@ -35,6 +35,7 @@ import org.jboss.jdocbook.util.ResourceDelegateSupport
 import org.jboss.jdocbook.util.TranslationUtils
 import org.jboss.jdocbook.util.XIncludeHelper
 import org.jboss.jdocbook.DocBookSchemaResolutionStrategy
+import org.gradle.api.artifacts.Configuration
 
 /**
  * An implementation of the jDocBook {@link Environment} contract specific to each configured book
@@ -63,7 +64,7 @@ class BookEnvironment implements Environment, MasterLanguageDescriptor {
         this.project = project
         this.masterLanguageDescriptor = this
         this.resourceDelegate = new ResourceDelegate()
-        this.outputDirName = "${project.buildDirName}/docbook"
+        this.outputDirName = "${project.buildDir}/docbook"
         this.workDirName = outputDirName + "/work"
         this.stageDirName = outputDirName + "/stage"
         this.publishDirName = outputDirName + "/publish"
@@ -112,7 +113,7 @@ class BookEnvironment implements Environment, MasterLanguageDescriptor {
                 throw new JDocBookProcessException("Unable to resolve staging directory to URL", e);
             }
         }
-        def feedingClasspathWithDependencies = { configuration ->
+        def feedingClasspathWithDependencies = { Configuration configuration ->
             configuration.files.each { File file ->
                 try {
                     urls.add(file.toURI().toURL());
@@ -126,8 +127,8 @@ class BookEnvironment implements Environment, MasterLanguageDescriptor {
         feedingClasspathWithDependencies(project.configurations."${JDocBookPlugin.DOCBOOK_CONFIG_NAME}")
         feedingClasspathWithDependencies(project.buildscript.configurations."${ScriptHandler.CLASSPATH_CONFIGURATION}")
         feedingClasspathWithDependencies(project.configurations."${JDocBookPlugin.STYLES_CONFIG_NAME}")
-
-        return new URLClassLoader( urls.toArray(new URL[urls.size()]), Thread.currentThread().getContextClassLoader() );
+        feedingClasspathWithDependencies(project.configurations."${JDocBookPlugin.XSL_CONFIG_NAME}")
+        return new URLClassLoader( urls.toArray(new URL[urls.size()]), Thread.currentThread().contextClassLoader);
     }
 
     File getWorkDirectory() {
