@@ -39,7 +39,7 @@ apply plugin: 'idea'
 apply plugin: 'uploadAuth'
 
 group = 'org.jboss.jdocbook'
-version = '1.2.1-SNAPSHOT'
+version = '1.2.1'
 
 targetCompatibility = "1.6"
 sourceCompatibility = "1.6"
