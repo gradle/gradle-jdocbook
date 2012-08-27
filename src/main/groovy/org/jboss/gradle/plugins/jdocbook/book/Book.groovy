@@ -93,7 +93,12 @@ class Book {
     }
 
     def format(String name, Closure closure) {
-        format(ConfigureUtil.configure(closure, new FormatOption(name)))
+		// if name is null then sometimes! the wrong ctor gets called. 
+		// calls FormatOption(FormatOption parent)
+		// appears to be platform dependent
+		def fo = name ? new FormatOption(name) : new FormatOption()
+		def config = ConfigureUtil.configure(closure, fo)
+        format(config)
     }
 
     def format(FormatOption f) {
