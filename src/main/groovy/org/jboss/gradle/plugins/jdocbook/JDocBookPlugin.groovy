@@ -44,26 +44,26 @@ public class JDocBookPlugin implements Plugin<Project> {
     public static final String DOCBOOK_CONFIG_NAME = "jdocbook";
 
     public void apply(final Project project) {
-        applyConfiguration(project)
-        def books = project.container(Book) { name -> new Book(name, project) }
-        JDocBookConvention convention = new JDocBookConvention(project, books)
-        project.convention.plugins.put(DOCBOOK_CONFIG_NAME, convention)
-        convention.configBookActions.add(new CreateTasksPerBookAction(project))
+        applyConfiguration( project )
+        def books = project.container(Book) { String name -> new Book( name, project ) }
+        JDocBookConvention convention = new JDocBookConvention( project, books )
+        project.convention.plugins.put( DOCBOOK_CONFIG_NAME, convention )
+        convention.configBookActions.add( new CreateTasksPerBookAction( project ) )
     }
 
-    private void applyConfiguration(Project project) {
-        Configuration deprecatedConfig = project.configurations.add(DOCBOOK_CONFIG_NAME)
-				.setVisible(false)
-				.setTransitive(false)
+    private static void applyConfiguration(Project project) {
+        Configuration deprecatedConfig = project.configurations.create( DOCBOOK_CONFIG_NAME )
+				.setVisible( false )
+				.setTransitive( false )
 				.setDescription( "The DocBook artifact(s) to use (deprecated, use jdocbookXsl instead)." );
-        project.configurations.add(XSL_CONFIG_NAME)
+        project.configurations.create( XSL_CONFIG_NAME )
 				.extendsFrom( deprecatedConfig )
-				.setVisible(false)
-				.setTransitive(true)
+				.setVisible( false )
+				.setTransitive( true )
 				.setDescription( "Defines any DocBook XSL artifacts to make available to the build" );
-        project.configurations.add(STYLES_CONFIG_NAME)
-				.setVisible(false)
-				.setTransitive(true)
-				.setDescription("Defines any jDocBook styles artifacts to apply");
+        project.configurations.create( STYLES_CONFIG_NAME )
+				.setVisible( false )
+				.setTransitive( true )
+				.setDescription( "Defines any jDocBook styles artifacts to apply" );
     }
 }

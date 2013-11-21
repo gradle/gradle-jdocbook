@@ -115,52 +115,77 @@ class CreateTasksPerBookAction implements Action<Book> {
 
         if (lang != book.masterLanguage) {
             //translation task per lang per book
-            translateTask = addTask(String.format("%s_%s", getTaskName(TRANSLATE_TASK_GROUP, book.name), lang), TranslateTask)
-            translateTask.description = String.format("Perform %s translation for language %s", getDescriptionName(book.name), lang)
-            translateTask.configure(book, lang)
-            getTask(getTaskName(TRANSLATE_TASK_GROUP, book.name)).dependsOn translateTask
+            translateTask = addTask(
+                    String.format( "%s_%s", getTaskName( TRANSLATE_TASK_GROUP, book.name ), lang ),
+                    TranslateTask
+            )
+            translateTask.description = String.format(
+                    "Perform %s translation for language %s",
+                    getDescriptionName( book.name ),
+                    lang
+            )
+            translateTask.configure( book, lang )
+            getTask( getTaskName( TRANSLATE_TASK_GROUP, book.name ) ).dependsOn translateTask
             //synchronize po task per lang per book
-            SynchronizePoTask poTask = addTask(String.format("%s_%s", getTaskName(UPDATE_PO_TASK_GROUP, book.name), lang), SynchronizePoTask)
-            poTask.description = String.format("Update %s PO files from current POT for language %s", getDescriptionName(book.name), lang)
-            poTask.configure(book, lang);
-            getTask(getTaskName(UPDATE_PO_TASK_GROUP, book.name)).dependsOn poTask
+            SynchronizePoTask poTask = addTask(
+                    String.format( "%s_%s", getTaskName( UPDATE_PO_TASK_GROUP, book.name ), lang ),
+                    SynchronizePoTask
+            )
+            poTask.description = String.format(
+                    "Update %s PO files from current POT for language %s",
+                    getDescriptionName( book.name ),
+                    lang
+            )
+            poTask.configure( book, lang );
+            getTask( getTaskName( UPDATE_PO_TASK_GROUP, book.name ) ).dependsOn poTask
         }
-        book.formats.all {FormatOption format ->
-            if (!format.enable) return
-            RenderTask render = addTask(String.format("%s_%s_%s", getTaskName(CreateTasksPerBookAction.RENDER_TASK_GROUP, book.name), lang, format.name),
-                    RenderTask)
 
-            render.description = String.format("Perform %s %s formatting for language %s", getDescriptionName(book.name), format.name, lang)
-            render.configure(book, lang, format)
+        book.formats.all { FormatOption format ->
+            if (!format.enable) {
+                return
+            }
+
+            RenderTask render = addTask(
+                    String.format("%s_%s_%s", getTaskName( RENDER_TASK_GROUP, book.name ), lang, format.name ),
+                    RenderTask
+            )
+
+            render.description = String.format(
+                    "Perform %s %s formatting for language %s",
+                    getDescriptionName( book.name ),
+                    format.name,
+                    lang
+            )
+            render.configure( book, lang, format )
             render.dependsOn styleStageTask
             if (lang != book.masterLanguage && translateTask != null) {
                 render.dependsOn translateTask
             }
             if (format.name == StandardDocBookFormatMetadata.PDF.name) {
-                String xslFoTaskName = getTaskName(CreateTasksPerBookAction.XSL_FO_TASK_GROUP, book.name)
+                String xslFoTaskName = getTaskName( XSL_FO_TASK_GROUP, book.name )
                 Task xslFoTask = getTask(xslFoTaskName)
                 if (xslFoTask == null) {
-                    xslFoTask = addTask(xslFoTaskName, GenerateXslFoTask)
-                    xslFoTask.description = String.format("Generating %s XSL FO files", getDescriptionName(book.name))
-                    xslFoTask.configure(book, lang)
+                    xslFoTask = addTask( xslFoTaskName, GenerateXslFoTask )
+                    xslFoTask.description = String.format( "Generating %s XSL FO files", getDescriptionName( book.name ) )
+                    xslFoTask.configure( book, lang )
                 }
             }
-            getTask(getTaskName(CreateTasksPerBookAction.RENDER_TASK_GROUP, book.name)).dependsOn render
+            getTask( getTaskName( RENDER_TASK_GROUP, book.name ) ).dependsOn render
         }
 
     }
 
     private Task getTask(String name) {
-        project.tasks.findByName(name)
+        project.tasks.findByName( name )
     }
 
     private <T extends Task> T addTask(String name, Class<T> type) {
-        project.tasks.add(name, type)
+        project.tasks.create( name, type )
     }
 
     private Task getOrCreateTask(String name, String description) {
         if (getTask(name) == null) {
-            Task task = project.tasks.add(name)
+            Task task = project.tasks.create( name )
             task.description = description
             task.group = JDOCBOOK_TASK_GROUP
             return task
@@ -170,11 +195,11 @@ class CreateTasksPerBookAction implements Action<Book> {
         }
     }
 
-    private String getDescriptionName(String displayName) {
-        String.format("Docbook %s", (displayName) ? "($displayName)" : "")
+    private static String getDescriptionName(String displayName) {
+        String.format( "Docbook %s", (displayName) ? "($displayName)" : "" )
     }
 
-    private String getTaskName(String perfix, String displayName) {
+    private static String getTaskName(String perfix, String displayName) {
         (displayName) ? String.format("%s_%s", perfix, displayName) : perfix
     }
 }

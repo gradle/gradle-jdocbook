@@ -1,76 +1,56 @@
-/*
- * jDocBook, processing of DocBook sources
- *
- * Copyright (c) 2011, Red Hat Inc. or third-party contributors as
- * indicated by the @author tags or express copyright attribution
- * statements applied by the authors.  All third-party contributions are
- * distributed under license by Red Hat Inc.
- *
- * This copyrighted material is made available to anyone wishing to use, modify,
- * copy, or redistribute it subject to the terms and conditions of the GNU
- * Lesser General Public License, as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
- * for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this distribution; if not, write to:
- * Free Software Foundation, Inc.
- * 51 Franklin Street, Fifth Floor
- * Boston, MA  02110-1301  USA
- */
 buildscript {
     repositories {
         mavenCentral()
 		mavenLocal()
-        mavenRepo name: "jboss", url: "http://repository.jboss.org/nexus/content/groups/public/"
+        maven {
+            name "jboss"
+            url "http://repository.jboss.org/nexus/content/groups/public/"
+        }
     }
     dependencies {
-        classpath 'org.hibernate.build.gradle:gradle-upload-auth-plugin:1.1.1'
+        classpath 'org.hibernate.build.gradle:gradle-maven-publish-auth:2.0.1'
     }
 }
 
 apply plugin: 'groovy'
-apply plugin: 'maven'   // used for 'install' and 'upload'/'deploy' task
 apply plugin: 'eclipse'
 apply plugin: 'idea'
-apply plugin: 'uploadAuth'
+apply plugin: 'maven-publish'
+apply plugin: 'maven-publish-auth'
 
 group = 'org.jboss.jdocbook'
-version = '1.2.1-SNAPSHOT'
+version = '1.2.2-SNAPSHOT'
+
+defaultTasks 'classes'
 
 targetCompatibility = "1.6"
 sourceCompatibility = "1.6"
 
-defaultTasks 'classes'
-
 repositories {
     mavenCentral()
-	mavenLocal()
-    mavenRepo name: "jboss", url: "http://repository.jboss.org/nexus/content/groups/public/"
+    mavenLocal()
+    maven {
+        name "jboss"
+        url "http://repository.jboss.org/nexus/content/groups/public/"
+    }
 }
 
-configurations {
-    deployerJars {
-		description = 'Jars needed for doing deployment to JBoss Nexus repo'
-	}
+ext {
+    expectedGradleVersion = '1.9'
+    spock = ['org.spockframework:spock-core:0.5-groovy-1.8@jar',
+            'org.hamcrest:hamcrest-core:1.2.1@jar',
+            'org.hamcrest:hamcrest-library:1.2.1@jar',
+            'cglib:cglib-nodep:2.2',
+            'org.objenesis:objenesis:1.2'
+    ]
+    jmock = ['org.jmock:jmock:2.5.1@jar',
+            'org.hamcrest:hamcrest-core:1.1@jar',
+            'org.jmock:jmock-junit4:2.5.1@jar',
+            'org.jmock:jmock-legacy:2.5.1@jar',
+            'org.objenesis:objenesis:1.2',
+            'cglib:cglib-nodep:2.2'
+    ]
 }
-ext{
-spock = ['org.spockframework:spock-core:0.5-groovy-1.8@jar',
-        'org.hamcrest:hamcrest-core:1.2.1@jar',
-        'org.hamcrest:hamcrest-library:1.2.1@jar',
-        'cglib:cglib-nodep:2.2',
-        'org.objenesis:objenesis:1.2'
-]
-jmock = ['org.jmock:jmock:2.5.1@jar',
-        'org.hamcrest:hamcrest-core:1.1@jar',
-        'org.jmock:jmock-junit4:2.5.1@jar',
-        'org.jmock:jmock-legacy:2.5.1@jar',
-        'org.objenesis:objenesis:1.2',
-        'cglib:cglib-nodep:2.2'
-]}
 
 dependencies {
     compile gradleApi()
@@ -78,13 +58,13 @@ dependencies {
     compile 'org.jboss.jdocbook:jdocbook-core:1.1.0'
     compile 'org.apache.ant:ant:1.7.0' //don't see why we need this here
 
-    groovy localGroovy()
+    compile localGroovy()
+
     testCompile 'junit:junit:4.8.1'
     testCompile jmock
     testCompile spock
     testCompile 'org.slf4j:slf4j-simple:1.6.1@jar'
     testCompile 'org.slf4j:jcl-over-slf4j:1.6.1@jar'
-    deployerJars "org.apache.maven.wagon:wagon-http:1.0"
 }
 
 manifest.mainAttributes(
@@ -95,59 +75,90 @@ manifest.mainAttributes(
         'Implementation-Vendor-Id': 'org.jboss'
 )
 
-def pomConfig = {
-    name 'jDocBook Plugin for Gradle'
-    description 'Plugin for integrating jDocBook into Gradle'
-    url 'http://github.com/gradle/gradle-jdocbook'
-    organization 'JBoss.org'
-    issueManagement {
-        // for the time being just use the github issue tracker
-        system 'github'
-        url 'http://github.com/gradle/gradle-jdocbook/issues'
-    }
-    scm {
-        url "http://github.com/gradle/gradle-jdocbook"
-        connection "scm:git:https://github.com/gradle/gradle-jdocbook.git"
-        developerConnection "scm:git:git@github.com:gradle/gradle-jdocbook.git"
-    }
-    licenses {
-        license {
-            name 'The Apache Software License, Version 2.0'
-            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-            distribution 'repo'
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            artifact sourcesJar {
+                classifier "sources"
+            }
+
+            pom.withXml {
+                // append additional metadata
+                asNode().children().last() + {
+                    resolveStrategy = Closure.DELEGATE_FIRST
+
+                    name 'jDocBook Plugin for Gradle'
+                    description 'Plugin for integrating jDocBook into Gradle'
+                    url 'http://github.com/gradle/gradle-jdocbook'
+                    organization {
+                        name 'JBoss.org'
+                        url 'http://jboss.org'
+                    }
+                    issueManagement {
+                        // for the time being just use the github issue tracker
+                        system 'github'
+                        url 'http://github.com/gradle/gradle-jdocbook/issues'
+                    }
+                    scm {
+                        url "http://github.com/gradle/gradle-jdocbook"
+                        connection "scm:git:https://github.com/gradle/gradle-jdocbook.git"
+                        developerConnection "scm:git:git@github.com:gradle/gradle-jdocbook.git"
+                    }
+                    licenses {
+                        license {
+                            name 'The Apache Software License, Version 2.0'
+                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                            distribution 'repo'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id 'sebersole'
+                            name 'Steve Ebersole'
+                        }
+                        developer {
+                            id 'stliu'
+                            name 'Strong Liu'
+                        }
+                        developer {
+                            id 'adammurdoch'
+                            name 'Adam Murdoch'
+                        }
+                        developer {
+                            id 'hansd'
+                            name 'Hans Dockter'
+                        }
+                    }
+                }
+
+                // TEMPORARY : currently Gradle Publishing feature is exporting dependencies as 'runtime' scope,
+                //      rather than 'compile'; fix that.
+                asNode().dependencies[0].dependency.each {
+                    it.scope[0].value = 'compile'
+                }
+            }
         }
     }
-    developers {
-        developer {
-            id 'sebersole'
-            name 'Steve Ebersole'
-        }
-        developer {
-            id 'stliu'
-            name 'Strong Liu'
-        }
-        developer {
-            id 'adammurdoch'
-            name 'Adam Murdoch'
-        }
-        developer {
-            id 'hansd'
-            name 'Hans Dockter'
+
+    repositories {
+        maven {
+            if ( version.endsWith( 'SNAPSHOT' ) ) {
+                name 'jboss-snapshots-repository'
+                url 'https://repository.jboss.org/nexus/content/repositories/snapshots'
+            }
+            else {
+                name 'jboss-releases-repository'
+                url 'https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/'
+            }
         }
     }
 }
 
-configure(install.repositories.mavenInstaller) {
-    pom.project pomConfig
-}
-
-uploadArchives {
-    repositories.mavenDeployer {
-        name = 'jbossDeployer'
-        configuration = configurations.deployerJars
-        pom.project pomConfig
-        repository(id: "jboss-releases-repository",url: "https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/")
-        snapshotRepository(id: "jboss-snapshots-repository",url: "https://repository.jboss.org/nexus/content/repositories/snapshots/")
+model {
+    tasks.generatePomFileForMavenJavaPublication {
+        destination = file("$buildDir/generated-pom.xml")
     }
 }
 
@@ -156,13 +167,7 @@ task sourcesJar(type: Jar, dependsOn: compileJava) {
     classifier = 'sources'
 }
 
-artifacts {
-    archives sourcesJar
-}
-
-uploadArchives.dependsOn sourcesJar
-uploadArchives.dependsOn install
-
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.1'
+    gradleVersion = expectedGradleVersion
 }
+
