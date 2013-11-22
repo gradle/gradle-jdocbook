@@ -65,10 +65,6 @@ class BookEnvironment implements Environment, MasterLanguageDescriptor {
         this.masterLanguageDescriptor = this
         this.resourceDelegate = new ResourceDelegate()
         this.outputDirName = "${project.buildDir}/docbook"
-        this.workDirName = outputDirName + "/work"
-        this.stageDirName = outputDirName + "/stage"
-        this.publishDirName = outputDirName + "/publish"
-        this.profileDirName = outputDirName + "/profile"
         this.workDirName = "$outputDirName/work/${book.name}"
         this.stageDirName = "$outputDirName/stage/${book.name}"
         this.publishDirName = "$outputDirName/publish/${book.name}"
@@ -76,13 +72,14 @@ class BookEnvironment implements Environment, MasterLanguageDescriptor {
     }
 
     Locale getLanguage() {
-        if (language == null)
-            language = getLanguage(book.masterLanguage)
+        if ( language == null ) {
+            language = getLanguage( book.masterLanguage )
+        }
         return language
     }
 
-    Locale getLanguage(lang) {
-        TranslationUtils.parse(lang, book.localeSeparator)
+    Locale getLanguage(String lang) {
+        TranslationUtils.parse( lang, book.localeSeparator )
     }
 
     public ResourceDelegate getResourceDelegate() {
@@ -90,10 +87,14 @@ class BookEnvironment implements Environment, MasterLanguageDescriptor {
     }
 
     Set<File> getDocumentFiles() {
-        if (documentFiles == null) {
+        if ( documentFiles == null ) {
             documentFiles = [] as Set
             documentFiles << getRootDocumentFile()
-            XIncludeHelper.findAllInclusionFiles(getRootDocumentFile(), documentFiles, getDocBookSchemaResolutionStrategy());
+            XIncludeHelper.findAllInclusionFiles(
+                    getRootDocumentFile(),
+                    documentFiles,
+                    getDocBookSchemaResolutionStrategy()
+            );
         }
         return documentFiles
     }
@@ -105,50 +106,58 @@ class BookEnvironment implements Environment, MasterLanguageDescriptor {
     private ClassLoader buildResourceDelegateClassLoader() {
         List<URL> urls = new ArrayList<URL>();
 
-        if (stagingDirectory.exists()) {
+        if ( stagingDirectory.exists() ) {
             try {
-                urls.add(stagingDirectory.toURI().toURL());
+                urls.add( stagingDirectory.toURI().toURL() );
             }
             catch (MalformedURLException e) {
-                throw new JDocBookProcessException("Unable to resolve staging directory to URL", e);
+                throw new JDocBookProcessException( "Unable to resolve staging directory to URL", e );
             }
         }
+
+        // Closure visited on numerous Gradle Configurations used to collect the dependency artifact URLs into
+        // the urls List
         def feedingClasspathWithDependencies = { Configuration configuration ->
             configuration.files.each { File file ->
                 try {
                     urls.add(file.toURI().toURL());
                 }
-                catch (MalformedURLException e) {
+                catch (MalformedURLException ignore) {
                     log.warn("Unable to retrieve file url [" + file.getAbsolutePath() + "]; ignoring");
                 }
             }
         }
+        feedingClasspathWithDependencies( project.configurations[ "${JDocBookPlugin.DOCBOOK_CONFIG_NAME}" ] )
+        feedingClasspathWithDependencies( project.buildscript.configurations[ "${ScriptHandler.CLASSPATH_CONFIGURATION}" ] )
+        feedingClasspathWithDependencies( project.configurations[ "${JDocBookPlugin.STYLES_CONFIG_NAME}" ] )
+        feedingClasspathWithDependencies( project.configurations[ "${JDocBookPlugin.XSL_CONFIG_NAME}" ] )
 
-        feedingClasspathWithDependencies(project.configurations."${JDocBookPlugin.DOCBOOK_CONFIG_NAME}")
-        feedingClasspathWithDependencies(project.buildscript.configurations."${ScriptHandler.CLASSPATH_CONFIGURATION}")
-        feedingClasspathWithDependencies(project.configurations."${JDocBookPlugin.STYLES_CONFIG_NAME}")
-        feedingClasspathWithDependencies(project.configurations."${JDocBookPlugin.XSL_CONFIG_NAME}")
-        return new URLClassLoader( urls.toArray(new URL[urls.size()]), Thread.currentThread().contextClassLoader);
+        return new URLClassLoader(
+                urls.toArray(new URL[urls.size()]),
+                // TCCL here should be the "expanded buildscript ClassLoader" as expanded by ScriptClassLoaderExtender
+                // which it then pushes to TCCL
+                Thread.currentThread().contextClassLoader
+        );
     }
 
     File getWorkDirectory() {
-        project.file(workDirName)
+        project.file( workDirName )
     }
 
-    File getWorkDirPerLang(lang) {
-        new File(workDirectory, lang)
+    File getWorkDirPerLang(String lang) {
+        new File( workDirectory, lang )
     }
 
-    File getProfileDirPerLang(lang) {
-        new File(profileDirName, lang)
+    File getProfileDirPerLang(String lang) {
+        project.file( "$profileDirName/$lang" )
     }
 
-    File getPublishDirPerLang(lang) {
-        project.file("$publishDirName/$lang")
+    File getPublishDirPerLang(String lang) {
+        project.file( "$publishDirName/$lang" )
     }
 
     File getStagingDirectory() {
-        project.file(stageDirName)
+        project.file( stageDirName )
     }
 
     private List<File> fontDirectories

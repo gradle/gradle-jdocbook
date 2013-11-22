@@ -70,12 +70,15 @@ public class GenerateXslFoTask extends BookTask implements RenderingSource {
 
     private FormatOptions findPdfFormatOptions() {
         def format = book.formats.findByName(StandardDocBookFormatMetadata.PDF.name)
-        if (format == null)
-        throw new JDocBookProcessException("Could not locate PDF format options");
+        if (format == null) {
+            throw new JDocBookProcessException("Could not locate PDF format options")
+        }
         return format
     }
 
-    File resolveSourceDocument() { getSourceDocument() }
+    File resolveSourceDocument() {
+        getSourceDocument()
+    }
 
     @InputFile
     File getSourceDocument() {

@@ -158,7 +158,7 @@ publishing {
 
 model {
     tasks.generatePomFileForMavenJavaPublication {
-        destination = file("$buildDir/generated-pom.xml")
+        destination = file( "$project.buildDir/generated-pom.xml" )
     }
 }
 
