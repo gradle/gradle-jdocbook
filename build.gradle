@@ -19,7 +19,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'maven-publish-auth'
 
 group = 'org.jboss.jdocbook'
-version = '1.2.2'
+version = '1.2.3-SNAPSHOT'
 
 defaultTasks 'classes'
 
